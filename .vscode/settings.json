@@ -1,0 +1,26 @@
+{
+    "editor.formatOnSave": true,
+    "editor.rulers": [
+        80
+    ],
+    "python.formatting.provider": "black",
+    "python.linting.enabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.lintOnSave": true,
+    "python.linting.mypyEnabled": true,
+    "python.linting.pydocstyleEnabled": true,
+    "[python]": {
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true
+        },
+        "editor.rulers": [
+            72,
+            88
+        ],
+        "diffEditor.ignoreTrimWhitespace": false,
+        "editor.wordBasedSuggestions": false
+    },
+    "cSpell.words": [
+        "passwordgen"
+    ]
+}
