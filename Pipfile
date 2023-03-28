@@ -8,6 +8,7 @@ name = "pypi"
 [dev-packages]
 black = ">=22.6.0,<22.7"
 flake8 = ">=6.0.0,<6.1"
+ipykernel = ">=6.15.1,<6.16"
 isort = ">=5.9.3,<5.10"
 mypy = ">=0.981,<1.0"
 pydocstyle = ">=6.3.0,<6.4"
