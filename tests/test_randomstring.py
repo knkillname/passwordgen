@@ -1,6 +1,6 @@
 import unittest
 
-from passwordgen.randomstring import RandomString
+from passwordgen.algorithms.randomstring import RandomString
 
 
 class TestRandomString(unittest.TestCase):

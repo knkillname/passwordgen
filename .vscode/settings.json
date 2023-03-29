@@ -1,7 +1,9 @@
 {
     "cSpell.words": [
+        "maxsplit",
         "passwordgen",
-        "randomstring"
+        "randomstring",
+        "XKCD"
     ],
     "editor.formatOnSave": true,
     "editor.rulers": [

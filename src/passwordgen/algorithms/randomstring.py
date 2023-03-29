@@ -8,10 +8,11 @@ Classes
 RandomString
     Generate a random string of characters.
 """
-from .abc import PasswordGeneratorBase
-from random import SystemRandom
-import string
 import math
+import string
+from random import SystemRandom
+
+from .abc import PasswordGeneratorBase
 
 
 class RandomString(PasswordGeneratorBase):
