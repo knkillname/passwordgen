@@ -13,6 +13,7 @@ HunspellDicFile
 """
 import abc
 import json
+import warnings
 from pathlib import Path
 from urllib import request
 
@@ -154,8 +155,6 @@ class HunspellDicFile:
     def file_name(self, file_name: str):
         if not isinstance(file_name, str):
             raise TypeError(f"Expected str, got {type(file_name)}")
-        if not file_name.endswith(".dic"):
-            raise ValueError(f"Expected file name to end with .dic, got {file_name}")
         self._file_name = file_name
 
     @property
@@ -232,8 +231,6 @@ class HunspellDicFile:
         # Check download URL and types:
         if self.url is None:
             raise ValueError("No download URL specified")
-        if not isinstance(self.url, str):
-            raise TypeError(f"Expected str, got {type(self.url)}")
         if not isinstance(download_dir, (str, Path)):
             raise TypeError(f"Expected str or Path, got {type(download_dir)}")
 
@@ -245,7 +242,7 @@ class HunspellDicFile:
 
         # Check if the file already exists:
         file_path = download_dir / self.file_name
-        if file_path and not overwrite:
+        if file_path.exists() and not overwrite:
             raise FileExistsError(f"File already exists: {file_path}")
 
         # Otherwise, download the file:
@@ -258,8 +255,8 @@ class HunspellDicFile:
         """
         return line.strip().split("/", maxsplit=1)[0]
 
-    def read_words(self, dictionaries_dir: str | Path) -> list[str]:
-        """Read the words from the dictionary file.
+    def load_words(self, dictionaries_dir: str | Path) -> list[str]:
+        """Load the words from the dictionary file.
 
         Parameters
         ----------
@@ -283,7 +280,13 @@ class HunspellDicFile:
 
         # Read the words from the file:
         with file_path.open("r", encoding=self.encoding) as file:
-            return [self.extract_word(line) for line in file]
+            expected_len = file.readline()
+            result = [self.extract_word(line) for line in file]
+        if len(result) != int(expected_len):
+            warnings.warn(
+                f"Expected {expected_len} words in file {file_path}, got {len(result)}"
+            )
+        return result
 
     def __repr__(self) -> str:
         """Return the representation of the dictionary file."""
@@ -364,35 +367,22 @@ class HunspellDictionariesManager:
         """Load the definitions from the definitions file."""
         with open(self.definitions_file, "r") as file:
             definitions_obj = json.load(file)
+
         self._definitions = {
             record["language_code"]: record
             for record in definitions_obj["dictionaries"]
         }
 
     def _load_dictionary(self, language_code: str) -> HunspellDicFile:
-        """Load a dictionary file from the definitions file.
-
-        Parameters
-        ----------
-        language_code : str
-            The language code of the dictionary file to load.
-
-        Returns
-        -------
-        HunspellDicFile
-            The dictionary file.
-
-        Raises
-        ------
-        KeyError
-            If the language code is not found in the definitions file.
-        """
+        """Load a dictionary file from the definitions file."""
         if language_code not in self._definitions:
             raise KeyError(f"Language code not found: {language_code}")
         return HunspellDicFile(**self._definitions[language_code])
 
     def load_words(self, language_code: str) -> list[str]:
         """Load the words from the dictionary file.
+
+        If the file is not present, it will be downloaded beforehand.
 
         Parameters
         ----------
@@ -408,7 +398,15 @@ class HunspellDictionariesManager:
         ------
         KeyError
             If the language code is not found in the definitions file.
-        FileNotFoundError
-            If the dictionary file does not exist.
+
+        Notes
+        -----
+        The dictionary file will be downloaded to the dictionaries
+        directory if it is not already present.
         """
-        return self._load_dictionary(language_code).read_words(self._dictionaries_dir)
+        dic_file = self._load_dictionary(language_code)
+        try:
+            dic_file.download(self.dictionaries_dir, overwrite=False)
+        except FileExistsError:
+            pass
+        return dic_file.load_words(self._dictionaries_dir)
