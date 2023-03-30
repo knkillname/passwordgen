@@ -12,6 +12,8 @@ PasswordGeneratorBase
 """
 import abc
 
+from ..passwords import Password
+
 
 class PasswordGeneratorBase(metaclass=abc.ABCMeta):
     """Base class for password generators.
@@ -31,25 +33,61 @@ class PasswordGeneratorBase(metaclass=abc.ABCMeta):
         """The description of the password generator."""
 
     @abc.abstractmethod
-    def generate_password(self, strength: int) -> str:
-        """Generate a password of the given strength.
+    def generate_password(
+        self, *, strength: int | None = None, length: int | None = None
+    ) -> Password:
+        """Generate a password of the given strength or length.
+
+        If no arguments are given, a password of strength 42 is
+        generated.
 
         Arguments
         ---------
-        strength : int
+        strength : int, optional
             The strength of the password measured in bits consumed by
-            the random number generator to create it.
+            the random number generator to create it. The default is 42.
+        length : int, optional
+            The length of the password. The default is None.
+
+        Raises
+        ------
+        ValueError
+            If both strength and length are given.
         """
 
-    def generate_many_passwords(self, strength: int, count: int) -> list[str]:
-        """Generate a list of passwords of the given strength.
+    def generate_many_passwords(
+        self,
+        count: int = 100,
+        *,
+        strength: int | None = None,
+        length: int | None = None,
+    ) -> list[Password]:
+        """Generate a list of passwords of the given strength or length.
 
         Arguments
         ---------
-        strength : int
-            The strength of the password measured in bits consumed by
-            the random number generator to create each.
         count : int
-            The number of passwords to generate.
+            The number of passwords to generate. The default is 100.
+        strength : int, optional
+            The strength of the passwords measured in bits consumed by
+            the random number generator to create them. The default is
+            42.
+        length : int, optional
+            The length of the passwords. The default is None.
+
+        Returns
+        -------
+        list[str]
+            The generated passwords.
+
+        Raises
+        ------
+        ValueError
+            If both strength and length are given.
         """
-        return [self.generate_password(strength) for _ in range(count)]
+        kwargs = {}
+        if strength is not None:
+            kwargs["strength"] = strength
+        if length is not None:
+            kwargs["length"] = length
+        return [self.generate_password(**kwargs) for _ in range(count)]

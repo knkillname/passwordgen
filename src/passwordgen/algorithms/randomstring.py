@@ -85,24 +85,41 @@ class RandomString(PasswordGeneratorBase):
         self._init_attributes_phase = False
         self._update_character_set()
 
-    def generate_password(self, strength: int = 42) -> str:
-        """Generate a password of the given strength.
+    def generate_password(
+        self, *, strength: int | None = None, length: int | None = None
+    ) -> str:
+        """Generate a password of the given strength or length.
 
         Arguments
         ---------
         strength : int
             The strength of the password measured in bits consumed by
-            the random number generator to create it.
+            the random number generator to create it. The default is 42.
+        length : int
+            The length of the password. The default is None.
 
         Returns
         -------
         str
             The generated password.
-        """
-        # Calculate the length of the password.
-        length = math.ceil(strength / self._character_entropy)
 
-        # Generate the password.
+        Raises
+        ------
+        ValueError
+            If both strength and length are given.
+        """
+        # Check that either strength or length is given.
+        if strength is None and length is None:
+            strength = 42
+        elif strength is not None and length is not None:
+            raise ValueError("Cannot specify both strength and length")
+
+        # Calculate the length of the password if it is not given.
+        if length is None:
+            assert strength is not None
+            length = math.ceil(strength / self._character_entropy)
+
+        # Generate the password of the given length.
         return "".join(self._random.choices(self._character_set, k=length))
 
     @property

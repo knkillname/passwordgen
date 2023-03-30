@@ -17,10 +17,10 @@ HunspellDictionaryShelf
     A Hunspell dictionary shelf.
 """
 import json
-from collections.abc import Sequence
 import shutil
 import tempfile
 import warnings
+from collections.abc import Sequence
 from pathlib import Path
 from urllib import request
 
