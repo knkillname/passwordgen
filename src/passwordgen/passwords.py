@@ -2,6 +2,7 @@
 import collections
 import functools
 from typing import NamedTuple
+
 from . import util
 
 

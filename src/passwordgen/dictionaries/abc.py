@@ -193,8 +193,8 @@ class DictionaryShelfBase(metaclass=abc.ABCMeta):
             with the given language code.
         """
 
-    @abc.abstractmethod
     @classmethod
+    @abc.abstractmethod
     def from_json(
         cls, json_path: str | Path, shelf_directory: Path
     ) -> "DictionaryShelfBase":

@@ -85,7 +85,22 @@ def entropy(probability: Collection[float] | Collection[int]) -> float:
     -------
     float
         The entropy of the probabilities.
+
+    Raises
+    ------
+    TypeError
+        If the probabilities are not a collection.
+    ValueError
+        If the probabilities are not positive or all zero.
     """
+    # Check arguments.
+    if not isinstance(probability, Collection):
+        raise TypeError("probability must be a collection")
+    if any(p < 0 for p in probability):
+        raise ValueError("probabilities must be non-negative")
+    if all(p == 0.0 for p in probability):
+        raise ValueError("probabilities must be non-zero")
+
     # Normalize p so that it sums to 1.
     total = math.fsum(probability)
     probability = [p / total for p in probability]

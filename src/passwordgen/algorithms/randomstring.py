@@ -12,6 +12,7 @@ import math
 import string
 from random import SystemRandom
 
+from ..passwords import Password
 from .abc import PasswordGeneratorBase
 
 
@@ -87,16 +88,18 @@ class RandomString(PasswordGeneratorBase):
 
     def generate_password(
         self, *, strength: int | None = None, length: int | None = None
-    ) -> str:
+    ) -> Password:
         """Generate a password of the given strength or length.
 
         Arguments
         ---------
-        strength : int
+        strength : int, optional
             The strength of the password measured in bits consumed by
             the random number generator to create it. The default is 42.
-        length : int
-            The length of the password. The default is None.
+            If given, it must be non-negative.
+        length : int, optional
+            The length of the password. The default is None. If given,
+            it must be non-negative.
 
         Returns
         -------
@@ -105,22 +108,42 @@ class RandomString(PasswordGeneratorBase):
 
         Raises
         ------
+        TypeError
+            If strength or length is not an int.
         ValueError
-            If both strength and length are given.
+            If both strength and length are given, or if the given
+            value is negative.
         """
-        # Check that either strength or length is given.
+        # Check that either strength or length is given and of
+        # the correct type.
         if strength is None and length is None:
             strength = 42
         elif strength is not None and length is not None:
             raise ValueError("Cannot specify both strength and length")
+        elif strength is not None:
+            if not isinstance(strength, int):
+                raise TypeError(f"Expected int, got {type(strength)}")
+            if strength <= 0:
+                raise ValueError("Strength must be non-negative")
+        elif length is not None:
+            if not isinstance(length, int):
+                raise TypeError(f"Expected int, got {type(length)}")
+            if length <= 0:
+                raise ValueError("Length must be non-negative")
 
         # Calculate the length of the password if it is not given.
         if length is None:
             assert strength is not None
             length = math.ceil(strength / self._character_entropy)
+        else:
+            assert strength is None
+            strength = int(length * self._character_entropy)
 
         # Generate the password of the given length.
-        return "".join(self._random.choices(self._character_set, k=length))
+        return Password(
+            password="".join(self._random.choices(self._character_set, k=length)),
+            strength=strength,
+        )
 
     @property
     def use_uppercase(self) -> bool:

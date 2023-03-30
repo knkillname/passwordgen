@@ -35,17 +35,19 @@ class TestRandomString(unittest.TestCase):
 
         # Generate a password with the default strength which is 42.
         password = RandomString().generate_password()
-        self.assertEqual(len(password), 8)
+        self.assertEqual(len(password.password), 8)
 
         # Generate a password with a custom strength.
         password = RandomString().generate_password(strength=42)
-        self.assertEqual(len(password), 8)
+        self.assertEqual(len(password.password), 8)
+        self.assertEqual(password.strength, 42)
         password = RandomString().generate_password(strength=128)
-        self.assertEqual(len(password), 22)
+        self.assertEqual(len(password.password), 22)
+        self.assertEqual(password.strength, 128)
 
         # Generate a password with the default character set.
         password = RandomString().generate_password(strength=42)
-        self.assertTrue(password.isalnum())
+        self.assertTrue(password.password.isalnum())
 
         # Generate a password with a custom character set.
         password = RandomString(
@@ -55,16 +57,16 @@ class TestRandomString(unittest.TestCase):
             use_punctuation=False,
             other_characters="abc",
         ).generate_password(strength=128)
-        self.assertTrue(password.isalpha())
-        self.assertTrue(password.islower())
-        self.assertTrue(password.isascii())
-        self.assertLessEqual(set(password), set("abc"))
+        self.assertTrue(password.password.isalpha())
+        self.assertTrue(password.password.islower())
+        self.assertTrue(password.password.isascii())
+        self.assertLessEqual(set(password.password), set("abc"))
 
     def test_generate_password_by_length(self):
         # Generate a password with the default character set.
         password = RandomString().generate_password(length=42)
-        self.assertEqual(len(password), 42)
-        self.assertTrue(password.isalnum())
+        self.assertEqual(len(password.password), 42)
+        self.assertTrue(password.password.isalnum())
 
         # Generate a password with a custom character set.
         password = RandomString(
@@ -74,11 +76,11 @@ class TestRandomString(unittest.TestCase):
             use_punctuation=False,
             other_characters="abc",
         ).generate_password(length=128)
-        self.assertEqual(len(password), 128)
-        self.assertTrue(password.isalpha())
-        self.assertTrue(password.islower())
-        self.assertTrue(password.isascii())
-        self.assertLessEqual(set(password), set("abc"))
+        self.assertEqual(len(password.password), 128)
+        self.assertTrue(password.password.isalpha())
+        self.assertTrue(password.password.islower())
+        self.assertTrue(password.password.isascii())
+        self.assertLessEqual(set(password.password), set("abc"))
 
     def test_generate_password_by_strength_and_length(self):
         # Specifying both strength and length should fail.

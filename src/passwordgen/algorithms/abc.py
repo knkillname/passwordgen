@@ -1,9 +1,8 @@
 """Base classes for password generators.
 
-Password generators are used to generate passwords of a given strength.
-The strength is measured in bits consumed by the random number generator
-to create the password. The length of the password is calculated from
-the strength and the algorithm used to generate it.
+Password generators are used to generate passwords of a given strength
+or length. The strength is measured in bits consumed by the random 
+number generator to create the password.
 
 Classes
 -------
@@ -38,21 +37,28 @@ class PasswordGeneratorBase(metaclass=abc.ABCMeta):
     ) -> Password:
         """Generate a password of the given strength or length.
 
-        If no arguments are given, a password of strength 42 is
-        generated.
-
         Arguments
         ---------
         strength : int, optional
             The strength of the password measured in bits consumed by
             the random number generator to create it. The default is 42.
+            If given, it must be non-negative.
         length : int, optional
-            The length of the password. The default is None.
+            The length of the password. The default is None. If given,
+            it must be non-negative.
+
+        Returns
+        -------
+        str
+            The generated password.
 
         Raises
         ------
+        TypeError
+            If strength or length is not an int.
         ValueError
-            If both strength and length are given.
+            If both strength and length are given, or if the given
+            value is negative.
         """
 
     def generate_many_passwords(
@@ -82,9 +88,15 @@ class PasswordGeneratorBase(metaclass=abc.ABCMeta):
 
         Raises
         ------
+        TypeError
+            If count, strength or length is not an int.
         ValueError
-            If both strength and length are given.
+            If both strength and length are given or if the given
+            value is negative.
         """
+        if not isinstance(count, int):
+            raise TypeError(f"Expected int, got {type(count)}")
+
         kwargs = {}
         if strength is not None:
             kwargs["strength"] = strength
