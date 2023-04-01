@@ -35,3 +35,7 @@ class TestEntropy(unittest.TestCase):
         self.assertAlmostEqual(util.entropy([1, 1]), 1.0)
         self.assertAlmostEqual(util.entropy([1, 2, 3]), 1.4591479170272448)
         self.assertAlmostEqual(util.entropy([1, 1, 1, 1]), 2.0)
+
+
+if __name__ == "__main__":
+    unittest.main()

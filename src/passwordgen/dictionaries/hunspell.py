@@ -411,11 +411,14 @@ class HunspellDictionaryShelf(DictionaryShelfBase):
         -------
         DictionaryFileBase
             The dictionary file for the specified language code.
+        KeyError
+            If no dictionary file exists for the specified language
+            code.
         """
         for dictionary in self.dictionaries:
             if dictionary.language_code == language_code:
                 return dictionary
-        raise ValueError(f"No dictionary found for language code {language_code!r}")
+        raise KeyError(f"No dictionary found for language code {language_code!r}")
 
     def load_words(self, language_code: str, download: bool = True) -> list[str]:
         """Load the words from a specified dictionary.
@@ -435,7 +438,7 @@ class HunspellDictionaryShelf(DictionaryShelfBase):
 
         Raises
         ------
-        ValueError
+        KeyError
             If no dictionary file exists for the specified language code.
         """
         dictionary = self.get_dictionary(language_code)

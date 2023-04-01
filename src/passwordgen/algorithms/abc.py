@@ -1,7 +1,7 @@
 """Base classes for password generators.
 
 Password generators are used to generate passwords of a given strength
-or length. The strength is measured in bits consumed by the random 
+or length. The strength is measured in bits consumed by the random
 number generator to create the password.
 
 Classes

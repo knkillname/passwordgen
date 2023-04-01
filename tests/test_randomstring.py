@@ -86,3 +86,7 @@ class TestRandomString(unittest.TestCase):
         # Specifying both strength and length should fail.
         with self.assertRaises(ValueError):
             RandomString().generate_password(strength=42, length=42)
+
+
+if __name__ == "__main__":
+    unittest.main()
