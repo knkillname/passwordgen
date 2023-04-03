@@ -1,6 +1,9 @@
 PIPENV_VENV_IN_PROJECT:=1
 export PIPENV_VENV_IN_PROJECT
 
+PIPENV_VERBOSITY=-1
+export PIPENV_VERBOSITY
+
 .phony: clean
 clean:
 	git clean -Xdf
@@ -11,8 +14,10 @@ test: .venv
 	pipenv run isort ./src ./tests
 	pipenv run black ./src ./tests
 	
-	# Lint code with flake8
+	# Lint code with flake8 and mypy
 	pipenv run flake8 ./src ./tests
+	pipenv run mypy ./src ./tests
+
 
 	# Run unit tests
 	pipenv run python -m unittest discover -v -s ./tests -p 'test_*.py'
