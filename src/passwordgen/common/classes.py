@@ -1,14 +1,44 @@
 """Common types used by the passwordgen package."""
 import collections
+import enum
 from typing import NamedTuple
 
 from . import util
 
-__all__ = ["Password", "Duration"]
+__all__ = ["Password", "Duration", "CrackMethodEnum"]
+
+
+class CrackMethodEnum(int, enum.Enum):
+    """An enumeration of the methods used to crack a password."""
+
+    BEST = enum.auto()
+    DICTIONARY = enum.auto()
+    BRUTE_FORCE = enum.auto()
 
 
 class Duration:
-    """A duration of time."""
+    """A duration of time.
+
+    Attributes
+    ----------
+    years : int
+        The number of years.
+    days : int
+        The number of days.
+    hours : int
+        The number of hours.
+    minutes : int
+        The number of minutes.
+    seconds : int
+        The number of seconds.
+
+    Methods
+    -------
+    total_seconds()
+        Get the total number of seconds.
+    describe()
+        Describe the duration in a human-readable format.
+    """
 
     def __init__(
         self,
@@ -18,6 +48,21 @@ class Duration:
         minutes: int | float = 0,
         seconds: int | float = 0,
     ):
+        """Initialize the duration.
+
+        Parameters
+        ----------
+        years : int | float, optional
+            The number of years, by default 0
+        days : int | float, optional
+            The number of days, by default 0
+        hours : int | float, optional
+            The number of hours, by default 0
+        minutes : int | float, optional
+            The number of minutes, by default 0
+        seconds : int | float, optional
+            The number of seconds, by default 0
+        """
         years, days, hours, minutes, seconds = util.normalize_time(
             years, days, hours, minutes, seconds
         )
@@ -71,6 +116,11 @@ class Duration:
         day". 1 minute is described as "1 minute" and 1 second is
         described as "1 second". Less than a second is described as
         "Less than a second".
+
+        Returns
+        -------
+        str
+            The description of the duration.
         """
         if self.years >= 1000000:
             millions_of_years = self.years // 1000000
@@ -139,33 +189,52 @@ class Password(NamedTuple):
             The entropy of the password.
         """
         weights = list(collections.Counter(self.password).values())
-        return util.entropy(weights)
+        character_entropy = util.entropy(weights)
+        return len(self.password) * character_entropy
 
-    def time_to_crack(self, guesses_per_second: int, brute_force=False) -> Duration:
+    def time_to_crack(
+        self, guesses_per_second: int, method: CrackMethodEnum = CrackMethodEnum.BEST
+    ) -> Duration:
         """Calculate the time to crack the password.
 
         Arguments
         ---------
         guesses_per_second : int
             The number of guesses that can be made per second.
-        brute_force : bool, optional
-            If True, the time to crack the password with a brute force
-            attack is calculated. If False, the time to crack the
-            password with a dictionary attack is calculated. The
-            default is False.
+        method : CrackMethodEnum, optional
+            The method to estimate the number of guesses needed to crack
+            the password, by default BEST.
 
         Returns
         -------
         Duration
             The time to crack the password.
         """
-        if brute_force:
-            guesses = int(2 ** self.entropy())
-        else:
-            guesses = int(2 ** (self.strength - 1))
+        guesses = self.guesses_to_crack(method)
         seconds = guesses // guesses_per_second
         minutes, seconds = divmod(seconds, 60)
         hours, minutes = divmod(minutes, 60)
         days, hours = divmod(hours, 24)
         years, days = divmod(days, 365)
         return Duration(years, days, hours, minutes, seconds)
+
+    def bits_to_crack(self, method: CrackMethodEnum) -> float:
+        """Get the number of bits needed to crack the password."""
+        if method == CrackMethodEnum.BRUTE_FORCE:
+            return self.entropy()
+        elif method == CrackMethodEnum.DICTIONARY:
+            return self.strength
+        return min(self.entropy(), self.strength)
+
+    def guesses_to_crack(self, method: CrackMethodEnum) -> int:
+        """Get the number of guesses needed to crack the password."""
+        bits = self.bits_to_crack(method)
+        return int(2 ** (bits - 1))
+
+    def __str__(self) -> str:
+        """Get the string representation of the password."""
+        return "{password} (strength: {strength} bits or {time})".format(
+            password=self.password,
+            strength=int(min(self.strength, self.entropy())),
+            time=self.time_to_crack(1000).describe(),
+        )
