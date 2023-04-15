@@ -7,6 +7,7 @@ name = "pypi"
 
 [dev-packages]
 black = ">=22.6.0,<22.7"
+coverage = ">=6.3.2,<6.4"
 flake8 = ">=6.0.0,<6.1"
 ipykernel = ">=6.15.1,<6.16"
 isort = ">=5.9.3,<5.10"

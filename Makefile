@@ -6,35 +6,37 @@ export PIPENV_VENV_IN_PROJECT
 PIPENV_VERBOSITY=-1
 export PIPENV_VERBOSITY
 
-.phony: lint format clean test default pipenv_check
+.phony: lint format clean test default check_pipenv
 
 # Default target
-default: pipenv_check env format lint test
+default: check_pipenv .venv format lint test
 
-pipenv_check:
-	@which pipenv > /dev/null || (echo "Pipenv not found. Please install it first." && exit 1)
+# Check if Pipenv is installed
+check_pipenv:
+	@which pipenv > /dev/null || (echo "Pipenv is not installed. Please install it first." && exit 1)
 
 # Create virtual environment
 env: .venv
 .venv: Pipfile Pipfile.lock
-	make pipenv_check
 	pipenv install --dev
 
 # Format code
-format: pipenv_check
+format: check_pipenv .venv
 	pipenv run isort ./src ./tests
 	pipenv run black ./src ./tests
 
 # Lint code
-lint: pipenv_check
+lint: check_pipenv .venv
 	pipenv run flake8 ./src ./tests
 	pipenv run mypy ./src ./tests
 	pipenv run isort --check-only --diff ./src ./tests
 	pipenv run pydocstyle ./src ./tests
 
 # Run tests
-test: pipenv_check .venv
-	pipenv run python -m unittest discover -v -s ./tests -p 'test_*.py'
+test: check_pipenv .venv
+	pipenv run coverage run --source=./src -m unittest discover -v -s ./tests -p 'test_*.py'
+	pipenv run coverage html
+	pipenv run coverage report -m
 
 # Clean up
 clean:
