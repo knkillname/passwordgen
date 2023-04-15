@@ -1,3 +1,13 @@
+"""Command line interface for the password generator.
+
+This module contains the main entry point for the password generator
+program.
+
+Classes
+-------
+PasswordGen
+    The main class for the password generator program.
+"""
 import argparse
 
 from .common.classes import Password
@@ -7,10 +17,20 @@ from .generators.xkcd import XKCDPasswordGenerator
 
 
 class PasswordGen:
+    """The main class for the password generator program."""
+
     def __init__(self):
+        """Initialize the program."""
         self.parser = self.create_parser()
 
     def main(self) -> None:
+        """Run the program.
+
+        Raises
+        ------
+        ValueError
+            If the generator is unknown.
+        """
         args = self.parser.parse_args()
         if args.generator == "random":
             self.use_random(args)
@@ -177,5 +197,6 @@ class PasswordGen:
         )
 
 
-application = PasswordGen()
-application.main()
+if __name__ == "__main__":
+    application = PasswordGen()
+    application.main()

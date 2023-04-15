@@ -1,3 +1,10 @@
+"""A builder for the XKCD password generator.
+
+Classes
+-------
+XKCDGeneratorBuilder
+    A builder for the XKCD password generator.
+"""
 from collections.abc import Sequence
 from pathlib import Path
 
@@ -9,6 +16,34 @@ _WORD_LISTS_DIR = util.get_resource_path("wordlists")
 
 
 class XKCDGeneratorBuilder(GeneratorBuilder):
+    """A builder for the XKCD password generator.
+
+    This builder allows you to create an XKCD password generator with
+    a custom word list and custom settings.
+
+    Properties
+    ----------
+    data_dir : Path
+        The directory containing the word lists.
+
+    Methods
+    -------
+    get_available_word_lists_files() -> Sequence[str]
+        Get the available word list files.
+    clear_word_list() -> None
+        Clear the word list.
+    add_words_from_list(word_list: Sequence[str]) -> None
+        Add words to the word list.
+    add_words_from_file(path: str | Path) -> None
+        Add words from a file to the word list.
+    with_count(count: int) -> None
+        Set the number of words to use.
+    with_separator(separator: str) -> None
+        Set the separator to use between words.
+    create_generator() -> XKCDPasswordGenerator
+        Create the generator.
+    """
+
     def __init__(self, data_dir: str | Path = _WORD_LISTS_DIR):
         """Initialize the factory.
 
@@ -33,6 +68,17 @@ class XKCDGeneratorBuilder(GeneratorBuilder):
         self._word_list: list[str] = []
         self._count = 4
         self._separator = " "
+
+    @property
+    def data_dir(self) -> Path:
+        """Get the data directory.
+
+        Returns
+        -------
+        Path
+            The data directory.
+        """
+        return self._data_dir
 
     def get_available_word_lists_files(self) -> Sequence[str]:
         """Get the available word list files.
