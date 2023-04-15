@@ -41,19 +41,19 @@ def entropy(probability: Iterable[SupportsFloat]) -> float:
 
 
 def get_resource_path(path: str) -> Path:
-    """Get the path to a resource file.
+    """Get the path to a resource file or subdirectory.
 
     Parameters
     ----------
     path : str
-        The path to the resource file, relative to the root of the
-        repository. The path should use Unix-style path separators; i.e.
-        forward slashes.
+        The path to the resource file or subdirectory, relative to the
+        root of the repository. The path should use Unix-style path
+        separators; i.e. forward slashes.
 
     Returns
     -------
     Path
-        The path to the resource file.
+        The path to the resource file or subdirectory.
     """
     return Path(__file__).parent.parent / "data" / path
 
