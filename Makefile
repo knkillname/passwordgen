@@ -34,7 +34,7 @@ lint: check_pipenv .venv
 
 # Run tests
 test: check_pipenv .venv
-	pipenv run coverage run --source=./src -m unittest discover -v -s ./tests -p 'test_*.py'
+	pipenv run coverage run -m unittest discover -v -s ./tests -p 'test_*.py'
 	pipenv run coverage html
 	pipenv run coverage report -m
 
