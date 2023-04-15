@@ -27,9 +27,10 @@ format: pipenv_check
 
 # Lint code
 lint: pipenv_check
-	pipenv run isort --check-only --diff ./src ./tests
 	pipenv run flake8 ./src ./tests
 	pipenv run mypy ./src ./tests
+	pipenv run isort --check-only --diff ./src ./tests
+	pipenv run pydocstyle ./src ./tests
 
 # Run tests
 test: pipenv_check .venv
