@@ -27,6 +27,8 @@ class XKCDPasswordGenerator(PasswordGeneratorBase):
         The list of words to use.
     count : int
         The number of words to use.
+    separator: str
+        The separator to use between words.
 
     Methods
     -------
@@ -39,7 +41,9 @@ class XKCDPasswordGenerator(PasswordGeneratorBase):
     name = "XKCD method"
     description = "Select random words from a list."
 
-    def __init__(self, word_list: Sequence[str], count: int = 4) -> None:
+    def __init__(
+        self, word_list: Sequence[str], count: int = 4, separator: str = " "
+    ) -> None:
         """Initialize the password generator.
 
         Parameters
@@ -48,9 +52,12 @@ class XKCDPasswordGenerator(PasswordGeneratorBase):
             The list of words to use.
         count : int, optional
             The number of words to use, by default 4
+        separator : str, optional
+            The separator to use between words, by default " "
         """
         self.word_list = word_list
         self.count = count
+        self.separator = separator
 
     @property
     def word_list(self) -> Sequence[str]:
@@ -80,6 +87,17 @@ class XKCDPasswordGenerator(PasswordGeneratorBase):
             raise ValueError(f"Expected non-negative int, got {value}")
         self._count = value
 
+    @property
+    def separator(self) -> str:
+        """The separator to use between words."""
+        return self._separator
+
+    @separator.setter
+    def separator(self, value: str) -> None:
+        if not isinstance(value, str):
+            raise TypeError(f"Expected str, got {type(value)}")
+        self._separator = value
+
     @classmethod
     def from_word_list_file(cls, path: Path | str) -> "XKCDPasswordGenerator":
         """Read a word list from a file.
@@ -108,5 +126,5 @@ class XKCDPasswordGenerator(PasswordGeneratorBase):
         """
         entropy_per_word = math.log2(len(self.word_list))
         entropy = entropy_per_word * self.count
-        password = " ".join(random.choices(self.word_list, k=self.count))
+        password = self.separator.join(random.choices(self.word_list, k=self.count))
         return Password(password, entropy)
