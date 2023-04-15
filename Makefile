@@ -13,7 +13,9 @@ default: check_pipenv venv format lint test
 
 # Check if Pipenv is installed
 check_pipenv:
-	@which pipenv > /dev/null || (echo "Pipenv is not installed. Please install it first." && exit 1)
+	@which pipenv > /dev/null \
+	|| (echo "Pipenv is not installed. Please install it first." && exit 1)
+
 
 # Create virtual environment
 venv: .venv/bin/activate
