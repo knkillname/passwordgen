@@ -42,7 +42,7 @@ class XKCDGeneratorBuilder(GeneratorBuilder):
         Sequence[str]
             The list of available word list files.
         """
-        return [f.stem for f in self._data_dir.glob("*.wl")]
+        return [f.stem for f in self._data_dir.glob("*.txt")]
 
     def clear_word_list(self) -> None:
         """Clear the word list."""
@@ -83,7 +83,7 @@ class XKCDGeneratorBuilder(GeneratorBuilder):
             converted to a Path. If the path is a Path, it is used
             directly. If the path is a relative path, it is assumed to
             be relative to the data directory. If the path is a
-            relative path with no extension, the extension .wl is
+            relative path with no extension, the extension .txt is
             appended.
 
         Raises
@@ -98,7 +98,7 @@ class XKCDGeneratorBuilder(GeneratorBuilder):
         if not isinstance(path, Path):
             raise TypeError(f"Expected str or path, got {type(path)}")
         if not path.exists() and not path.is_absolute() and len(path.parts) == 1:
-            path = self._data_dir / path.with_suffix(".wl").name
+            path = self._data_dir / path.with_suffix(".txt").name
         with path.open("rt", encoding="utf-8") as f:
             lines = f.readlines()
         words = [stripped for line in lines if (stripped := line.strip())]
