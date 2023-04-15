@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
 
-from passwordgen.common import Password
+from passwordgen.common import CrackMethodEnum, Password
 
 
 class TestPassword(unittest.TestCase):
@@ -20,13 +20,13 @@ class TestPassword(unittest.TestCase):
 
         # Test the time to crack calculation by brute force on a
         # password with no entropy.
-        crack_time = Password("aaaa", 0).time_to_crack(1, brute_force=True)
-        self.assertEqual(crack_time.total_seconds(), 1.0)
+        crack_time = Password("aaaa", 0).time_to_crack(1, CrackMethodEnum.BRUTE_FORCE)
+        self.assertEqual(crack_time.total_seconds(), 0.0)
 
         # Test the time to crack calculation by brute force on a
-        # password with 1 bit of entropy.
-        crack_time = Password("abab", 0).time_to_crack(1, brute_force=True)
-        self.assertEqual(crack_time.total_seconds(), 2.0)
+        # password with 1 bit of entropy per character and 4 characters.
+        crack_time = Password("abab", 0).time_to_crack(1, CrackMethodEnum.BRUTE_FORCE)
+        self.assertEqual(crack_time.total_seconds(), 8.0)
 
 
 if __name__ == "__main__":
