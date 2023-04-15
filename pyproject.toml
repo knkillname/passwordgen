@@ -19,3 +19,6 @@ classifiers = [
 
 [tool.isort]
 profile = "black"
+
+[project.scripts]
+passwordgen = "passwordgen.__main__:main"
