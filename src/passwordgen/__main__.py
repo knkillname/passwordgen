@@ -93,8 +93,8 @@ class PasswordGen:
             "-c",
             "--count",
             type=int,
-            default=1,
-            help="The number of passwords to generate (default: 1)",
+            default=10,
+            help="The number of passwords to generate (default: 10)",
         )
         # Mimic the arguments from XKCDPasswordGenerator
         xkcd_parser.add_argument(
@@ -134,8 +134,8 @@ class PasswordGen:
             "-c",
             "--count",
             type=int,
-            default=1,
-            help="The number of passwords to generate (default: 1)",
+            default=10,
+            help="The number of passwords to generate (default: 10)",
         )
         # Mimic the arguments from RandomStringPasswordGenerator
         random_parser.add_argument(
