@@ -12,3 +12,4 @@ XKCDGenerator
 from .abc import PasswordGeneratorBase
 from .builders.xkcdbuilder import XKCDGeneratorBuilder
 from .randomstring import RandomStringPasswordGenerator
+from .xkcd import XKCDPasswordGenerator
