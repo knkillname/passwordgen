@@ -1,11 +1,15 @@
+"""Test the common module."""
 import unittest
 from unittest import mock
 
 from passwordgen.common import CrackMethodEnum, Duration, Password, util
 
 
-class TestPassword(unittest.TestCase):
+class TestCommon(unittest.TestCase):
+    """Test the common module."""
+
     def test_password(self):
+        """Test the Password class."""
         # Test instantiating a password.
         password = Password("password", 42)
         self.assertEqual(password.password, "password")
@@ -38,6 +42,7 @@ class TestPassword(unittest.TestCase):
         self.assertIn("sequoia", result)
 
     def test_duration(self):
+        """Test the Duration class."""
         # Test instantiating a duration.
         duration = Duration(years=1, days=2, hours=3, minutes=4, seconds=5)
         self.assertEqual(duration.years, 1)
@@ -70,15 +75,16 @@ class TestPassword(unittest.TestCase):
         self.assertEqual(Duration(seconds=0).describe(), "Less than a second")
 
     def test_get_resource_path(self):
+        """Test the get_resource_path function."""
         # Test getting the path to a resource.
         path = util.get_resource_path("test.txt")
         self.assertEqual("test.txt", path.parts[-1])
 
     def test_normalize_time(self):
+        """Test the normalize_time function."""
         # The util.normalize_time function is used in the Duration class
         # to normalize the number of seconds, minutes, hours, and days
-        # in a duration. This test ensures that the function works as
-        # expected.
+        # in a duration.
 
         # Test normalizing a duration.
         duration = Duration(years=1, days=2, hours=3, minutes=4, seconds=5)
