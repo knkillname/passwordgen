@@ -16,10 +16,9 @@ check_pipenv:
 	@which pipenv > /dev/null \
 	|| (echo "Pipenv is not installed. Please install it first." && exit 1)
 
-
 # Create virtual environment
 venv: .venv/bin/activate
-.venv/bin/activate: Pipfile Pipfile.lock
+.venv/bin/activate: Pipfile
 	pipenv install --dev
 	@touch $@
 
@@ -30,15 +29,14 @@ format: check_pipenv venv
 
 # Lint code
 lint: check_pipenv venv
-	pipenv run flake8 ./src ./tests
-	pipenv run mypy ./src ./tests
 	pipenv run isort --check-only --diff ./src ./tests
+	pipenv run mypy ./src ./tests
 	pipenv run pydocstyle ./src ./tests
+	pipenv run pylint ./src ./tests
 
 # Run tests
 test: check_pipenv venv
 	pipenv run coverage run -m unittest discover -v -s ./tests -p 'test_*.py'
-	pipenv run coverage html
 	pipenv run coverage report -m
 
 # Clean up

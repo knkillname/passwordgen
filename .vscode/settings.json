@@ -9,13 +9,14 @@
     "editor.rulers": [
         80
     ],
-    "python.formatting.provider": "black",
     "python.defaultInterpreterPath": "./venv/bin/python3",
+    "python.formatting.provider": "black",
     "python.linting.enabled": true,
-    "python.linting.flake8Enabled": true,
+    "python.linting.flake8Enabled": false,
     "python.linting.lintOnSave": true,
     "python.linting.mypyEnabled": true,
     "python.linting.pydocstyleEnabled": true,
+    "python.linting.pylintEnabled": true,
     "python.testing.pytestEnabled": false,
     "python.testing.unittestArgs": [
         "-v",
@@ -35,5 +36,6 @@
         ],
         "diffEditor.ignoreTrimWhitespace": false,
         "editor.wordBasedSuggestions": false
-    }
+    },
+    "cSpell.language": "en-GB"
 }
