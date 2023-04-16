@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 
 [dev-packages]
-babel = ">=2.10.3<2.11"
 black = ">=22.6.0,<22.7"
 coverage = ">=6.3.2,<6.4"
 isort = ">=5.9.3,<5.10"
