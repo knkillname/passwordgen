@@ -8,11 +8,18 @@ GeneratorBuilder
 
 import abc
 
+from ...generators.abc import PasswordGeneratorBase
 
-class GeneratorBuilder(metaclass=abc.ABCMeta):
+
+class PasswordGeneratorBuilder(metaclass=abc.ABCMeta):
     """Abstract base class for password generator builders."""
 
     @abc.abstractmethod
-    def create_generator(self):
+    def build(self) -> PasswordGeneratorBase:
         """Create a password generator."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def reset(self) -> None:
+        """Reset the builder."""
         raise NotImplementedError
