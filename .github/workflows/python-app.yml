@@ -43,3 +43,4 @@ jobs:
     - name: Test with unittest and report code coverage
       run: |
         pipenv run coverage run -m unittest discover -v -s ./tests -p 'test_*.py'
+        pipenv run coverage report -m
