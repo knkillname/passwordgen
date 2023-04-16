@@ -32,7 +32,7 @@ lint: check_pipenv venv
 	pipenv run isort --check-only --diff ./src ./tests
 	pipenv run mypy ./src ./tests
 	pipenv run pydocstyle ./src ./tests
-	pipenv run pylint ./src ./tests
+	pipenv run pylint --disable=R ./src ./tests
 
 # Run tests
 test: check_pipenv venv

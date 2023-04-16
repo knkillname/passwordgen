@@ -83,7 +83,7 @@ def normalize_time(
     Returns
     -------
     tuple[int, int, int, int, int]
-        The normalized time.
+        The normalised time.
     """
     # Propagate year fractions to days.
     years, aux = divmod(years, 1)

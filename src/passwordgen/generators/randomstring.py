@@ -86,6 +86,15 @@ class RandomStringPasswordGenerator(PasswordGeneratorBase):
         ValueError
             If the length is negative.
         """
+        self._charset: str
+        self._length: int
+        self._use_uppercase: bool
+        self._use_lowercase: bool
+        self._use_digits: bool
+        self._use_punctuation: bool
+        self._other_characters: str
+        self._random: SystemRandom
+
         self.length = length
         self.use_uppercase = use_uppercase
         self.use_lowercase = use_lowercase

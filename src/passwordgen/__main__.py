@@ -37,7 +37,7 @@ class PasswordGen:
         elif args.generator == "xkcd":
             self.use_xkcd(args)
         else:
-            raise ValueError("Unknown generator: {g}".format(g=args.generator))
+            raise ValueError(f"Unknown generator: {args.generator}")
 
     def use_random(self, args: argparse.Namespace) -> None:
         """Use the random string password generator.

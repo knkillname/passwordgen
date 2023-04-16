@@ -1,22 +1,27 @@
 {
+    "cSpell.language": "en-GB",
     "cSpell.words": [
         "maxsplit",
         "passwordgen",
         "randomstring",
-        "XKCD"
+        "XKCD",
+        "xkcdbuilder"
     ],
     "editor.formatOnSave": true,
     "editor.rulers": [
         80
     ],
-    "python.defaultInterpreterPath": "./venv/bin/python3",
+    "python.defaultInterpreterPath": ".venv/bin/python3",
     "python.formatting.provider": "black",
     "python.linting.enabled": true,
     "python.linting.flake8Enabled": false,
     "python.linting.lintOnSave": true,
     "python.linting.mypyEnabled": true,
+    "python.linting.mypyPath": ".venv/bin/mypy",
     "python.linting.pydocstyleEnabled": true,
+    "python.linting.pydocstylePath": ".venv/bin/pydocstyle",
     "python.linting.pylintEnabled": true,
+    "python.linting.pylintPath": ".venv/bin/pylint",
     "python.testing.pytestEnabled": false,
     "python.testing.unittestArgs": [
         "-v",
@@ -36,6 +41,5 @@
         ],
         "diffEditor.ignoreTrimWhitespace": false,
         "editor.wordBasedSuggestions": false
-    },
-    "cSpell.language": "en-GB"
+    }
 }

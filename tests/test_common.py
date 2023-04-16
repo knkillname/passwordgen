@@ -1,7 +1,7 @@
 import unittest
 from unittest import mock
 
-from passwordgen.common import CrackMethodEnum, Password
+from passwordgen.common import CrackMethodEnum, Duration, Password, util
 
 
 class TestPassword(unittest.TestCase):
@@ -27,6 +27,74 @@ class TestPassword(unittest.TestCase):
         # password with 1 bit of entropy per character and 4 characters.
         crack_time = Password("abab", 0).time_to_crack(1, CrackMethodEnum.BRUTE_FORCE)
         self.assertEqual(crack_time.total_seconds(), 8.0)
+
+        # Test the time to crack calculation by a dictionary attack on a
+        # password with no strength.
+        crack_time = Password("aaaa", 0).time_to_crack(1, CrackMethodEnum.DICTIONARY)
+        crack_time = Password("sequoia", 0).time_to_crack(1, CrackMethodEnum.BEST)
+
+        # Test converting a password to a human-readable string.
+        result = str(Password("sequoia", 42))
+        self.assertIn("sequoia", result)
+
+    def test_duration(self):
+        # Test instantiating a duration.
+        duration = Duration(years=1, days=2, hours=3, minutes=4, seconds=5)
+        self.assertEqual(duration.years, 1)
+        self.assertEqual(duration.days, 2)
+        self.assertEqual(duration.hours, 3)
+        self.assertEqual(duration.minutes, 4)
+        self.assertEqual(duration.seconds, 5)
+
+        # Test the total seconds calculation.
+        duration = Duration(years=1, days=2, hours=3, minutes=4, seconds=5)
+        self.assertAlmostEqual(duration.total_seconds(), 31740771.079999994)
+
+        # Test the total seconds calculation with a duration of 0.
+        duration = Duration(seconds=0)
+        self.assertEqual(duration.total_seconds(), 0.0)
+
+        # Test converting a duration to a human-readable string.
+        self.assertEqual(Duration(years=2123456).describe(), "2 million years")
+        self.assertEqual(Duration(years=123456).describe(), "123 thousand years")
+        self.assertEqual(Duration(years=1, days=2).describe(), "1 year")
+        self.assertEqual(Duration(years=2, days=30).describe(), "2 years")
+        self.assertEqual(Duration(days=1, hours=10).describe(), "1 day")
+        self.assertEqual(Duration(days=2, hours=10).describe(), "2 days")
+        self.assertEqual(Duration(hours=1, minutes=10).describe(), "1 hour")
+        self.assertEqual(Duration(hours=2, minutes=10).describe(), "2 hours")
+        self.assertEqual(Duration(minutes=1, seconds=10).describe(), "1 minute")
+        self.assertEqual(Duration(minutes=2, seconds=10).describe(), "2 minutes")
+        self.assertEqual(Duration(seconds=1).describe(), "1 second")
+        self.assertEqual(Duration(seconds=2).describe(), "2 seconds")
+        self.assertEqual(Duration(seconds=0).describe(), "Less than a second")
+
+    def test_get_resource_path(self):
+        # Test getting the path to a resource.
+        path = util.get_resource_path("test.txt")
+        self.assertEqual("test.txt", path.parts[-1])
+
+    def test_normalize_time(self):
+        # The util.normalize_time function is used in the Duration class
+        # to normalize the number of seconds, minutes, hours, and days
+        # in a duration. This test ensures that the function works as
+        # expected.
+
+        # Test normalizing a duration.
+        duration = Duration(years=1, days=2, hours=3, minutes=4, seconds=5)
+        self.assertEqual(duration.years, 1)
+        self.assertEqual(duration.days, 2)
+        self.assertEqual(duration.hours, 3)
+        self.assertEqual(duration.minutes, 4)
+        self.assertEqual(duration.seconds, 5)
+
+        # Test normalizing a duration with more than 60 seconds.
+        duration = Duration(seconds=61)
+        self.assertEqual(duration.years, 0)
+        self.assertEqual(duration.days, 0)
+        self.assertEqual(duration.hours, 0)
+        self.assertEqual(duration.minutes, 1)
+        self.assertEqual(duration.seconds, 1)
 
 
 if __name__ == "__main__":

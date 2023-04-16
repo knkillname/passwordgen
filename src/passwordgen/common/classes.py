@@ -42,6 +42,7 @@ class Duration:
 
     def __init__(
         self,
+        *,
         years: int | float = 0,
         days: int | float = 0,
         hours: int | float = 0,
@@ -124,32 +125,31 @@ class Duration:
         """
         if self.years >= 1000000:
             millions_of_years = self.years // 1000000
-            return "{n} million years".format(n=millions_of_years)
-        elif self.years >= 1000:
+            return f"{millions_of_years} million years"
+        if self.years >= 1000:
             thousands_of_years = self.years // 1000
-            return "{n} thousand years".format(n=thousands_of_years)
-        elif self.years > 1:
-            return "{n} years".format(n=self.years)
-        elif self.years == 1:
+            return f"{thousands_of_years} thousand years"
+        if self.years > 1:
+            return f"{self.years} years"
+        if self.years == 1:
             return "1 year"
-        elif self.days > 1:
-            return "{n} days".format(n=self.days)
-        elif self.days == 1:
+        if self.days > 1:
+            return f"{self.days} days"
+        if self.days == 1:
             return "1 day"
-        elif self.hours > 1:
-            return "{n} hours".format(n=self.hours)
-        elif self.hours == 1:
+        if self.hours > 1:
+            return f"{self.hours} hours"
+        if self.hours == 1:
             return "1 hour"
-        elif self.minutes > 1:
-            return "{n} minutes".format(n=self.minutes)
-        elif self.minutes == 1:
+        if self.minutes > 1:
+            return f"{self.minutes} minutes"
+        if self.minutes == 1:
             return "1 minute"
-        elif self.seconds > 1:
-            return "{n} seconds".format(n=self.seconds)
-        elif self.seconds == 1:
+        if self.seconds > 1:
+            return f"{self.seconds} seconds"
+        if self.seconds == 1:
             return "1 second"
-        else:
-            return "Less than a second"
+        return "Less than a second"
 
 
 class Password(NamedTuple):
@@ -216,7 +216,9 @@ class Password(NamedTuple):
         hours, minutes = divmod(minutes, 60)
         days, hours = divmod(hours, 24)
         years, days = divmod(days, 365)
-        return Duration(years, days, hours, minutes, seconds)
+        return Duration(
+            years=years, days=days, hours=hours, minutes=minutes, seconds=seconds
+        )
 
     def bits_to_crack(self, method: CrackMethodEnum) -> float:
         """Get the number of bits needed to crack the password."""
@@ -233,8 +235,7 @@ class Password(NamedTuple):
 
     def __str__(self) -> str:
         """Get the string representation of the password."""
-        return "{password} (strength: {strength} bits or {time})".format(
-            password=self.password,
-            strength=int(min(self.strength, self.entropy())),
-            time=self.time_to_crack(1000).describe(),
-        )
+        password = self.password
+        strength = int(min(self.strength, self.entropy()))
+        time = self.time_to_crack(1000).describe()
+        return f"{password} (strength: {strength} bits or {time})"

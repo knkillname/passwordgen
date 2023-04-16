@@ -145,8 +145,8 @@ class XKCDGeneratorBuilder(GeneratorBuilder):
             raise TypeError(f"Expected str or path, got {type(path)}")
         if not path.exists() and not path.is_absolute() and len(path.parts) == 1:
             path = self._data_dir / path.with_suffix(".txt").name
-        with path.open("rt", encoding="utf-8") as f:
-            lines = f.readlines()
+        with path.open("rt", encoding="utf-8") as file:
+            lines = file.readlines()
         words = [stripped for line in lines if (stripped := line.strip())]
         self.add_words_from_list(words)
 
