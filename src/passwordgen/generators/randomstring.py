@@ -45,12 +45,18 @@ class RandomStringPasswordGenerator(PasswordGeneratorBase):
         Generate many passwords.
     """
 
+    # pylint: disable=too-many-instance-attributes
+    # We use private attributes to store the values of the public
+    # attributes. This is to allow us to validate the values of the
+    # public attributes when they are set.
+
     name = "Random String"
     description = "Generate a random string of characters."
 
     def __init__(
         self,
         length: int = 8,
+        *,
         use_uppercase: bool = True,
         use_lowercase: bool = True,
         use_digits: bool = True,
@@ -63,18 +69,18 @@ class RandomStringPasswordGenerator(PasswordGeneratorBase):
         ----------
         length : int, optional
             The length of the password, by default 8
-        use_uppercase : bool, optional
+        use_uppercase : bool, optional, keyword-only
             Whether to use uppercase letters in the password, by default
             True.
-        use_lowercase : bool, optional
+        use_lowercase : bool, optional, keyword-only
             Whether to use lowercase letters in the password, by default
             True.
-        use_digits : bool, optional
+        use_digits : bool, optional, keyword-only
             Whether to use digits in the password, by default True.
-        use_punctuation : bool, optional
+        use_punctuation : bool, optional, keyword-only
             Whether to use punctuation characters in the password, by
             default True.
-        other_characters : str, optional
+        other_characters : str, optional, keyword-only
             Characters to include in the password, by default "". These
             characters will be included in the password even if the
             corresponding use_* option is False.
