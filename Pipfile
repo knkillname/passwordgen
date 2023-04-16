@@ -10,6 +10,7 @@ black = ">=22.6.0,<22.7"
 coverage = ">=6.3.2,<6.4"
 isort = ">=5.9.3,<5.10"
 mypy = ">=0.981,<1.0"
+pycodestyle = ">=2.10.0,<2.11"
 pylint = ">=2.16.2,<2.17"
 rope = ">=1.7.0,<1.8"
 passwordgen = {editable = true, path = "."}
