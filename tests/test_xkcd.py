@@ -34,7 +34,7 @@ class TestXKCDPasswordGenerator(unittest.TestCase):
         """Test the from_word_list_file method."""
         # Create a temporary file with a word list.
         with tempfile.NamedTemporaryFile(mode="w", delete=False) as file:
-            file.write("foo\nbar\nbaz\nqux\n")
+            file.writelines(["foo\n", "bar\n", "baz\n", "qux\n"])
             file.seek(0)
 
             # Test the instantiation of the class from the word list file.
