@@ -71,7 +71,7 @@ class PasswordGen:
         builder.add_words_from_file(args.word_list)
         builder.with_count(args.word_count)
         builder.with_separator(args.separator)
-        generator = builder.create_generator()
+        generator = builder.build()
         password: Password
         for password in generator.generate_many_passwords(count=args.count):
             print(password)

@@ -10,12 +10,12 @@ from pathlib import Path
 
 from ...common import util
 from ..xkcd import XKCDPasswordGenerator
-from .abc import GeneratorBuilder
+from .abc import PasswordGeneratorBuilder
 
 _WORD_LISTS_DIR = util.get_resource_path("wordlists")
 
 
-class XKCDGeneratorBuilder(GeneratorBuilder):
+class XKCDGeneratorBuilder(PasswordGeneratorBuilder):
     """A builder for the XKCD password generator.
 
     This builder allows you to create an XKCD password generator with
@@ -65,9 +65,10 @@ class XKCDGeneratorBuilder(GeneratorBuilder):
         if not data_dir.exists() and not data_dir.is_dir():
             raise FileNotFoundError(f"Directory {data_dir} does not exist")
         self._data_dir = data_dir
-        self._word_list: list[str] = []
-        self._count = 4
-        self._separator = " "
+        self._word_list: list[str]
+        self._count: int
+        self._separator: str
+        self.reset()
 
     @property
     def data_dir(self) -> Path:
@@ -170,7 +171,7 @@ class XKCDGeneratorBuilder(GeneratorBuilder):
         """
         self._separator = separator
 
-    def create_generator(self):
+    def build(self):
         """Create a password generator.
 
         Returns
@@ -181,3 +182,9 @@ class XKCDGeneratorBuilder(GeneratorBuilder):
         return XKCDPasswordGenerator(
             word_list=self._word_list, count=self._count, separator=self._separator
         )
+
+    def reset(self) -> None:
+        """Reset the builder to its default state."""
+        self._word_list = []
+        self._count = 4
+        self._separator = " "
