@@ -17,9 +17,7 @@ class PasswordGeneratorBuilder(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def build(self) -> PasswordGeneratorBase:
         """Create a password generator."""
-        raise NotImplementedError
 
     @abc.abstractmethod
     def reset(self) -> None:
         """Reset the builder."""
-        raise NotImplementedError

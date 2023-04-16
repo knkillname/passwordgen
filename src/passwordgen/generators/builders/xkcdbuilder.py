@@ -171,7 +171,7 @@ class XKCDGeneratorBuilder(PasswordGeneratorBuilder):
         """
         self._separator = separator
 
-    def build(self):
+    def build(self) -> XKCDPasswordGenerator:
         """Create a password generator.
 
         Returns

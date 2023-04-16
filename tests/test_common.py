@@ -74,6 +74,24 @@ class TestCommon(unittest.TestCase):
         self.assertEqual(Duration(seconds=2).describe(), "2 seconds")
         self.assertEqual(Duration(seconds=0).describe(), "Less than a second")
 
+    def test_entropy(self):
+        """Test the entropy function."""
+        # Test calculating the entropy of a probability distribution.
+        self.assertEqual(util.entropy([1]), 0.0)
+        self.assertEqual(util.entropy([1, 1]), 1)
+        self.assertEqual(util.entropy([2, 1, 1]), 1.5)
+
+        # Test type checking.
+        with self.assertRaises(TypeError):
+            util.entropy(1)
+
+        # Test value checking.
+        with self.assertRaises(ValueError):
+            util.entropy([1, -1])
+
+        with self.assertRaises(ValueError):
+            util.entropy([0, 0, 0, 0])
+
     def test_get_resource_path(self):
         """Test the get_resource_path function."""
         # Test getting the path to a resource.

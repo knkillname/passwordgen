@@ -71,7 +71,7 @@ class XKCDPasswordGenerator(PasswordGeneratorBase):
         if not value:
             raise ValueError("Expected a non-empty sequence")
         if not all(isinstance(word, str) for word in value):
-            raise ValueError("Expected a sequence of strings")
+            raise TypeError("Expected a sequence of strings")
         self._word_list = value
 
     @property
