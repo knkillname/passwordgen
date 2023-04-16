@@ -123,6 +123,12 @@ class Duration:
         str
             The description of the duration.
         """
+        # pylint: disable=too-many-return-statements
+        # Since the number of return statements is proportional to the
+        # number of possible units of time, it is not possible to reduce
+        # the number of return statements (or branches) without reducing
+        # the number of possible units of time.
+
         if self.years >= 1000000:
             millions_of_years = self.years // 1000000
             return f"{millions_of_years} million years"
@@ -224,7 +230,7 @@ class Password(NamedTuple):
         """Get the number of bits needed to crack the password."""
         if method == CrackMethodEnum.BRUTE_FORCE:
             return self.entropy()
-        elif method == CrackMethodEnum.DICTIONARY:
+        if method == CrackMethodEnum.DICTIONARY:
             return self.strength
         return min(self.entropy(), self.strength)
 
