@@ -97,7 +97,7 @@ class PasswordGen:
         self._add_xkcd_subparser(subparsers)
 
         # Add subparser for easy random password generator
-        self._add_easyrandom_subparser(subparsers)
+        self._add_easy_random_subparser(subparsers)
 
         return parser
 
@@ -198,6 +198,61 @@ class PasswordGen:
             default="",
             help="Characters to include in the password",
         )
+    def _add_easy_random_subparser(self, subparsers):
+        """Add a subparser for the easy random string password generator.
+
+        Parameters
+        ----------
+        subparsers : argparse._SubParsersAction
+            The subparsers to add the subparser to.
+        """
+        easy_random_parser = subparsers.add_parser(
+            "easy", help=RandomStringPasswordGenerator.description
+        )
+        easy_random_parser.add_argument(
+            "-c",
+            "--count",
+            type=int,
+            default=10,
+            help="The number of passwords to generate (default: 10)",
+        )
+        # Mimic the arguments from RandomStringPasswordGenerator
+        easy_random_parser.add_argument(
+            "-l",
+            "--length",
+            type=int,
+            default=16,
+            help="The length of the password (default: 16)",
+        )
+        easy_random_parser.add_argument(
+            "--no-uppercase",
+            action="store_false",
+            dest="use_uppercase",
+            help="Do not use uppercase letters in the password",
+        )
+        easy_random_parser.add_argument(
+            "--no-lowercase",
+            action="store_false",
+            dest="use_lowercase",
+            help="Do not use lowercase letters in the password",
+        )
+        easy_random_parser.add_argument(
+            "--no-digits",
+            action="store_false",
+            dest="use_digits",
+            help="Do not use digits in the password",
+        )
+        easy_random_parser.add_argument(
+            "--no-punctuation",
+            action="store_false",
+            dest="use_punctuation",
+            help="Do not use punctuation characters in the password",
+        )
+        easy_random_parser.add_argument(
+            "--other",
+            dest="other_characters",
+            default="",
+            help="Characters to include in the password",
 
 
 if __name__ == "__main__":
