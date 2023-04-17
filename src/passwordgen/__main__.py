@@ -96,6 +96,9 @@ class PasswordGen:
         # Add subparser for XKCD password generator
         self._add_xkcd_subparser(subparsers)
 
+        # Add subparser for easy random password generator
+        self._add_easyrandom_subparser(subparsers)
+
         return parser
 
     def _add_xkcd_subparser(self, subparsers: argparse._SubParsersAction):
