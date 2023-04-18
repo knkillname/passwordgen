@@ -186,5 +186,5 @@ class EasyRandomPasswordGenerator(PasswordGeneratorBase):
         return (
             len(selected_words) * word_entropy
             + (self.length - words_length) * filler_entropy
-            + math.log2(arrangements)
+            + (math.log2(arrangements) if arrangements > 0 else 0)
         )

@@ -10,7 +10,7 @@ PasswordGen
 """
 import argparse
 
-from .common.classes import Password
+from .generators.builders.easyrandombuilder import EasyRandomBuilder
 from .generators.builders.xkcdbuilder import XKCDGeneratorBuilder
 from .generators.randomstring import RandomStringPasswordGenerator
 from .generators.xkcd import XKCDPasswordGenerator
@@ -36,6 +36,8 @@ class PasswordGen:
             self.use_random(args)
         elif args.generator == "xkcd":
             self.use_xkcd(args)
+        elif args.generator == "easy":
+            self.use_easy_random(args)
         else:
             raise ValueError(f"Unknown generator: {args.generator}")
 
@@ -55,7 +57,6 @@ class PasswordGen:
             use_punctuation=args.use_punctuation,
             other_characters=args.other_characters,
         )
-        password: Password
         for password in generator.generate_many_passwords(count=args.count):
             print(password)
 
@@ -72,7 +73,22 @@ class PasswordGen:
         builder.with_count(args.word_count)
         builder.with_separator(args.separator)
         generator = builder.build()
-        password: Password
+        for password in generator.generate_many_passwords(count=args.count):
+            print(password)
+
+    def use_easy_random(self, args: argparse.Namespace) -> None:
+        """Use the easy random password generator.
+
+        Parameters
+        ----------
+        args : argparse.Namespace
+            The arguments.
+        """
+        builder = EasyRandomBuilder()
+        builder.add_words_from_file(args.word_list)
+        builder.with_length(args.length)
+        builder.add_filler_chars(args.filler_chars)
+        generator = builder.build()
         for password in generator.generate_many_passwords(count=args.count):
             print(password)
 
@@ -198,6 +214,7 @@ class PasswordGen:
             default="",
             help="Characters to include in the password",
         )
+
     def _add_easy_random_subparser(self, subparsers):
         """Add a subparser for the easy random string password generator.
 
@@ -225,34 +242,21 @@ class PasswordGen:
             help="The length of the password (default: 16)",
         )
         easy_random_parser.add_argument(
-            "--no-uppercase",
-            action="store_false",
-            dest="use_uppercase",
-            help="Do not use uppercase letters in the password",
+            "-w",
+            "--word-list",
+            dest="word_list",
+            default="en_GB",
+            help="The word list to use (default: en_GB)",
         )
         easy_random_parser.add_argument(
-            "--no-lowercase",
-            action="store_false",
-            dest="use_lowercase",
-            help="Do not use lowercase letters in the password",
+            "--filler",
+            default="!#$%&/=?-+*<>@~0123456789",
+            dest="filler_chars",
+            help=(
+                "Characters to use to fill the password "
+                "(default: !#$%&/=?-+*<>@~0123456789)"
+            ),
         )
-        easy_random_parser.add_argument(
-            "--no-digits",
-            action="store_false",
-            dest="use_digits",
-            help="Do not use digits in the password",
-        )
-        easy_random_parser.add_argument(
-            "--no-punctuation",
-            action="store_false",
-            dest="use_punctuation",
-            help="Do not use punctuation characters in the password",
-        )
-        easy_random_parser.add_argument(
-            "--other",
-            dest="other_characters",
-            default="",
-            help="Characters to include in the password",
 
 
 if __name__ == "__main__":

@@ -1,15 +1,24 @@
-import string
+"""EasyRandomBuilder class.
+
+This module contains the EasyRandomBuilder class, which is used to build
+EasyRandomPasswordGenerator instances.
+
+Classes
+-------
+EasyRandomBuilder
+    Build an EasyRandomPasswordGenerator.
+"""
+from collections.abc import Collection, Iterable
 from pathlib import Path
-from typing import Optional, TypedDict
-from .abc import PasswordGeneratorBuilder
-from ..easyrandom import EasyRandomPasswordGenerator
+
 from ...common.util import get_resource_path
+from ..easyrandom import EasyRandomPasswordGenerator
+from .abc import PasswordGeneratorBuilder
 
 _DEFAULT_DATA_DIR = get_resource_path("wordlists")
 
 
 class EasyRandomBuilder(PasswordGeneratorBuilder):
-    # FIXME: Docstring is incorrect.
     """Build an EasyRandomPasswordGenerator.
 
     Methods
@@ -20,14 +29,12 @@ class EasyRandomBuilder(PasswordGeneratorBuilder):
         Set the length of the passwords to generate.
     add_words_from_file(file_name)
         Add words from a file to the dictionary.
-    add_words_from_string(words)
-        Add words from a string to the dictionary.
     add_words_from_list(words)
         Add words from a list to the dictionary.
-    add_filler_chars_from_string(chars)
+    add_filler_chars(chars)
         Add filler characters from a string to the filler character list.
-    add_filler_chars_from_list(chars)
-        Add filler characters from a list to the filler character list.
+    reset()
+        Reset the builder to its default state.
     """
 
     def __init__(self, data_dir: str | Path = _DEFAULT_DATA_DIR) -> None:
@@ -48,7 +55,7 @@ class EasyRandomBuilder(PasswordGeneratorBuilder):
         """
         self._length = 16
         self._dictionary: list[str] = []
-        self._filler_chars: Optional[list[str]] = None
+        self._filler_chars: list[str] | None = None
         self._data_dir = Path(data_dir)
         if not self._data_dir.is_dir():
             raise FileNotFoundError(f"Data directory does not exist: {data_dir}")
@@ -85,43 +92,57 @@ class EasyRandomBuilder(PasswordGeneratorBuilder):
             file_name = self._data_dir / file_name.with_suffix(".txt")
         with file_name.open("rt", encoding="utf-8") as file:
             lines = file.readlines()
-        self._dictionary.extend(
+        self.add_words_from_list(
             stripped for line in lines if (stripped := line.strip())
         )
         return self
 
-    def with_filler_chars(self, chars: str) -> "EasyRandomBuilder":
-        """Set the characters to use as filler.
+    def add_words_from_list(self, words: Iterable[str]) -> "EasyRandomBuilder":
+        """Add words from a list to the dictionary.
+
+        Parameters
+        ----------
+        words : Iterable[str]
+            The words to add to the dictionary.
+
+        Raises
+        ------
+        TypeError
+            If words is not an Iterable[str].
+        """
+        if not isinstance(words, Iterable):
+            raise TypeError(f"Expected Iterable[str], got {type(words)}")
+        if not isinstance(words, Collection):
+            words = list(words)
+        if not all(isinstance(word, str) for word in words):
+            raise TypeError(f"Expected Iterable[str], got {type(words)}")
+
+        self._dictionary.extend(words)
+        # Remove duplicates
+        self._dictionary = list(dict.fromkeys(self._dictionary))
+        return self
+
+    def add_filler_chars(self, chars: str) -> "EasyRandomBuilder":
+        """Add filler characters from a string.
 
         Parameters
         ----------
         chars : str
-            The characters to use as filler.
+            The characters to add to the filler character list.
+
+        Raises
+        ------
+        TypeError
+            If chars is not a str.
         """
         if not isinstance(chars, str):
             raise TypeError(f"Expected str, got {type(chars)}")
-        self._filler_chars = list(chars)
-        return self
-
-    def with_default_filler_chars(self) -> "EasyRandomBuilder":
-        """Use the default filler characters."""
-        self._filler_chars = None
-        return self
-
-    def with_punctuation_filler_chars(self) -> "EasyRandomBuilder":
-        """Add punctuation characters to the filler characters."""
         if self._filler_chars is None:
-            self._filler_chars = list(string.punctuation)
+            self._filler_chars = list(chars)
         else:
-            self._filler_chars.extend(string.punctuation)
-        return self
-
-    def with_digits_filler_chars(self) -> "EasyRandomBuilder":
-        """Add digits to the filler characters."""
-        if self._filler_chars is None:
-            self._filler_chars = list(string.digits)
-        else:
-            self._filler_chars.extend(string.digits)
+            self._filler_chars.extend(
+                char for char in chars if char not in self._filler_chars
+            )
         return self
 
     def build(self) -> EasyRandomPasswordGenerator:
