@@ -10,6 +10,6 @@ XKCDGenerator
     Generate a password using the XKCD method.
 """
 from .abc import PasswordGeneratorBase
-from .builders.xkcdbuilder import XKCDGeneratorBuilder
+from .builders.xkcdbuilder import XKCDPasswordGeneratorBuilder
 from .randomstring import RandomStringPasswordGenerator
 from .xkcd import XKCDPasswordGenerator

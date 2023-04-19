@@ -1,2 +1,3 @@
 """Password generator builders."""
-from .xkcdbuilder import XKCDGeneratorBuilder
+from .easyrandombuilder import EasyRandomPasswordGeneratorBuilder
+from .xkcdbuilder import XKCDPasswordGeneratorBuilder

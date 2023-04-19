@@ -1,10 +1,18 @@
 {
     "cSpell.language": "en-GB",
     "cSpell.words": [
+        "dictionarybuilder",
+        "docstrings",
+        "easyrandom",
+        "easyrandombuilder",
         "isort",
         "knkillname",
         "maxsplit",
+        "mypy",
         "passwordgen",
+        "pipenv",
+        "pydocstyle",
+        "pylint",
         "randomstring",
         "XKCD",
         "xkcdbuilder"

@@ -5,89 +5,214 @@ import unittest
 from pathlib import Path
 
 from passwordgen.common import util
-from passwordgen.generators.builders import XKCDGeneratorBuilder
+from passwordgen.generators.builders import (
+    EasyRandomPasswordGeneratorBuilder,
+    XKCDPasswordGeneratorBuilder,
+)
+from passwordgen.generators.builders.abc import DictionaryPasswordGeneratorBuilderBase
 
 
-class TestGeneratorBuilders(unittest.TestCase):
-    """Test the generator builders module."""
+class TestDictionaryBuilderBase(unittest.TestCase):
+    """Test the DictionaryBuilderBase class."""
 
-    def test_xkcd_builder(self):
-        """Test the XKCDGeneratorBuilder class."""
-        # Instantiating a builder with a non-existent word list files
-        # directory should result in a FileNotFoundError.
+    class DummyBuilder(DictionaryPasswordGeneratorBuilderBase):
+        """A dummy builder for testing the base class."""
+
+        def build(self):
+            pass
+
+        def reset(self):
+            pass
+
+    def test_init(self):
+        """Test the instance initialization."""
+        # Test that DictionaryBuilderBase cannot be instantiated
+        # directly as it is an abstract base class.
+        with self.assertRaises(TypeError):
+            # pylint: disable=abstract-class-instantiated
+            DictionaryPasswordGeneratorBuilderBase()
+
+        # Test that the default dictionaries directory is used if none
+        # is specified.
+        builder = type(self).DummyBuilder()
+        self.assertEqual(
+            builder.dictionaries_dir, util.get_resource_path("dictionaries")
+        )
+
+        # Test that the specified dictionaries directory is used if one
+        # is specified.
+        with tempfile.TemporaryDirectory() as temp_dir:
+            builder = type(self).DummyBuilder(temp_dir)
+            self.assertEqual(builder.dictionaries_dir, Path(temp_dir))
+
+        # Test that a FileNotFoundError is raised if the specified
+        # data directory does not exist or is not a directory.
         with self.assertRaises(FileNotFoundError):
-            builder = XKCDGeneratorBuilder(data_dir="non-existent")
+            type(self).DummyBuilder("non-existent")
+        with tempfile.NamedTemporaryFile() as file:
+            with self.assertRaises(FileNotFoundError):
+                type(self).DummyBuilder(file.name)
 
-        # Instantiating a builder with a bad type data directory should
-        # result in a TypeError.
+        # Test that a TypeError is raised if the specified data
+        # directory is not a string or Path.
         with self.assertRaises(TypeError):
-            builder = XKCDGeneratorBuilder(data_dir=123)
+            type(self).DummyBuilder(123)
 
-        # Adding words from a non sequence of strings should result in a TypeError.
+        builder = type(self).DummyBuilder()
         with self.assertRaises(TypeError):
-            builder = XKCDGeneratorBuilder()
-            builder.add_words_from_list(123)
+            builder.dictionaries_dir = 123
+
+    def test_parse_word(self):
+        """Test the default implementation of parse_word."""
+        builder = type(self).DummyBuilder()
+        self.assertEqual(builder.parse_word("test"), "test")
+        self.assertEqual(builder.parse_word(" \ttest\r\n"), "test")
+        self.assertIsNone(builder.parse_word(""))
+        self.assertIsNone(builder.parse_word(" \t\r\n"))
+
+    def test_get_available_dictionaries(self):
+        """Test the get_available_dictionaries method."""
+        # Create a temporary directory to test with.
+        with tempfile.TemporaryDirectory() as temp_dir:
+            dir_path = Path(temp_dir)
+            # Create a dictionary file in the directory.
+            (dir_path / "test.txt").touch()
+            builder = type(self).DummyBuilder(dir_path)
+            # The test dictionary should be found.
+            self.assertIn("test", builder.get_available_dictionaries())
+
+    def test_add_words_from_file(self):
+        """Test the add_words_from_file method."""
+        builder = type(self).DummyBuilder()
+        # Create a temporary file to test with.
+        with tempfile.NamedTemporaryFile("wt", suffix=".txt") as file:
+            file.writelines(["this\n", "is\n", "a\n", "test\n"])
+            file.seek(0)
+            builder.add_words_from_file(file.name)
+            self.assertEqual(builder.get_dictionary(), ["this", "is", "a", "test"])
+
+        # Attempting to add words from a non-existent file should result
+        # in a FileNotFoundError.
+        with self.assertRaises(FileNotFoundError):
+            builder.add_words_from_file("non-existent")
+
+        # Attempting to add words from a non file should result in a
+        # TypeError.
         with self.assertRaises(TypeError):
-            builder = XKCDGeneratorBuilder()
-            builder.add_words_from_list(["this", 123])
-        # Attempting to add words from a non file should result in a TypeError.
-        with self.assertRaises(TypeError):
-            builder = XKCDGeneratorBuilder()
             builder.add_words_from_file(123)
 
-        # The default data directory should be the wordlists directory
-        # in the package data.
-        builder = XKCDGeneratorBuilder()
-        self.assertEqual(builder.data_dir, util.get_resource_path("wordlists"))
+    def test_add_words_from_iterable(self):
+        """Test the add_words_from_iterable method."""
+        builder = type(self).DummyBuilder()
+        builder.add_words_from_iterable(["this", "is", "a", "test"], filter_empty=False)
+        self.assertEqual(builder.get_dictionary(), ["this", "is", "a", "test"])
 
-        # Building a generator with a word list:
-        builder = XKCDGeneratorBuilder()
-        builder.add_words_from_list(["this", "is", "a", "test"])
-        builder.with_count(2)
-        builder.with_separator(",")
-        generator = builder.build()
-        self.assertEqual(generator.separator, ",")
-        self.assertEqual(generator.count, 2)
-        self.assertEqual(generator.word_list, ["this", "is", "a", "test"])
-        # After clearing the word list, the generator should not be
-        # buildable
-        builder.clear_word_list()
-        with self.assertRaises(ValueError):
-            builder.build()
+        # Test that empty strings are filtered when filter_empty is True.
+        builder = type(self).DummyBuilder()
+        builder.add_words_from_iterable(
+            ["this", "is", "a", "test", "", " ", "\t"], filter_empty=True
+        )
+        self.assertEqual(
+            builder.get_dictionary(), ["this", "is", "a", "test", " ", "\t"]
+        )
 
-        # Building a generator with an included word list file:
-        builder = XKCDGeneratorBuilder()
-        builder.add_words_from_file("en_GB")
-        generator = builder.build()
-        # Get expected set of words from the file
-        file_path = util.get_resource_path("wordlists/en_GB.txt")
-        with file_path.open("r") as file:
-            expected_words = {
-                stripped for line in file.readlines() if (stripped := line.strip())
-            }
-        self.assertEqual(set(generator.word_list), expected_words)
-        self.assertEqual(len(generator.word_list), len(expected_words))
+        # Attempting to add words from a non iterable of strings should
+        # result in a TypeError.
+        with self.assertRaises(TypeError):
+            builder.add_words_from_iterable(123)
+        with self.assertRaises(TypeError):
+            builder.add_words_from_iterable(["this", 123])
 
-        # Building a generator with a custom data directory:
-        with tempfile.TemporaryDirectory() as temp_dir:
-            # Create a custom word list file
-            file_path = Path(temp_dir) / "custom.txt"
-            with file_path.open("w") as file:
-                file.writelines(["this\n", "is\n", "a\n", "test\n"])
-            # Create a builder with the custom data directory
-            builder = XKCDGeneratorBuilder(data_dir=temp_dir)
-            available_word_lists = builder.get_available_word_lists_files()
-            self.assertEqual(available_word_lists, ["custom"])
 
-        # Building a generator with no words should result in a
-        # ValueError.
-        with self.assertRaises(ValueError):
-            builder = XKCDGeneratorBuilder()
-            builder.build()
+class TestXKCDGeneratorBuilder(unittest.TestCase):
+    """Test the XKCDGeneratorBuilder class."""
 
-        # Building a generator after a reset should result in a ValueError.
-        with self.assertRaises(ValueError):
-            builder = XKCDGeneratorBuilder()
-            builder.add_words_from_list(["this", "is", "a", "test"])
-            builder.reset()
-            builder.build()
+    test_words = ["this", "is", "a", "test"]
+
+    def test_with_word_count(self):
+        """Test the with_word_count method."""
+        builder = XKCDPasswordGeneratorBuilder()
+        builder.add_words_from_iterable(self.test_words)
+        result = builder.with_word_count(5)
+        self.assertIs(result, builder)
+        instance = builder.build()
+        self.assertEqual(instance.word_count, 5)
+
+    def test_with_separator(self):
+        """Test the with_separator method."""
+        builder = XKCDPasswordGeneratorBuilder()
+        builder.add_words_from_iterable(self.test_words)
+        result = builder.with_separator("X")
+        self.assertIs(result, builder)
+        instance = builder.build()
+        self.assertEqual(instance.separator, "X")
+
+    def test_build(self):
+        """Test the build method."""
+        instance = (
+            XKCDPasswordGeneratorBuilder()
+            .with_separator(",")
+            .with_word_count(8)
+            .add_words_from_iterable(["this", "is", "a", "test"])
+            .build()
+        )
+        self.assertEqual(instance.word_count, 8)
+        self.assertEqual(instance.separator, ",")
+        self.assertEqual(instance.dictionary, ["this", "is", "a", "test"])
+
+
+class TestEasyRandomBuilder(unittest.TestCase):
+    """Test the EasyRandomBuilder class."""
+
+    dictionary = ["this", "is", "a", "test"]
+
+    def test_with_length(self):
+        """Test the with_length method."""
+        builder = EasyRandomPasswordGeneratorBuilder().add_words_from_iterable(
+            self.dictionary
+        )
+        result = builder.with_length(10)
+        self.assertIs(result, builder)
+        instance = builder.build()
+        self.assertEqual(instance.length, 10)
+
+        # Attempting to set the length to a non integer should result in
+        # a TypeError.
+        with self.assertRaises(TypeError):
+            builder.with_length("10")
+
+    def test_add_filler_chars(self):
+        """Test the add_filler_chars method."""
+        builder = EasyRandomPasswordGeneratorBuilder().add_words_from_iterable(
+            self.dictionary
+        )
+        result = builder.add_filler_characters("-01")
+        self.assertIs(result, builder)
+        instance = builder.build()
+        self.assertEqual(instance.filler_characters, "-01")
+
+        # Attempting to add filler characters that are not strings
+        # should result in a TypeError.
+        with self.assertRaises(TypeError):
+            builder.add_filler_characters(123)
+
+        # Adding characters two times should extend the list of filler
+        # characters.
+        builder = EasyRandomPasswordGeneratorBuilder().add_words_from_iterable(
+            self.dictionary
+        )
+        builder.add_filler_characters("01").add_filler_characters("23")
+        instance = builder.build()
+        self.assertEqual(instance.filler_characters, "0123")
+
+    def test_reset(self):
+        """Test the reset method."""
+        builder = EasyRandomPasswordGeneratorBuilder().add_words_from_iterable(
+            self.dictionary
+        )
+        builder.add_filler_characters("01").with_length(10)
+        builder.reset()
+        builder.add_filler_characters("23").with_length(16)
+        instance = builder.build()
+        self.assertEqual(instance.filler_characters, "23")
+        self.assertEqual(instance.length, 16)

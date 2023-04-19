@@ -37,7 +37,7 @@ jobs:
     - name: Check for docstrings with pydocstyle
       run: |
         pipenv run pydocstyle ./src ./tests
-    - name: Check propper import order with isort
+    - name: Check proper import order with isort
       run: |
         pipenv run isort --check-only --diff ./src ./tests
     - name: Test with unittest and report code coverage
