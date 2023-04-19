@@ -25,7 +25,7 @@ class XKCDPasswordGenerator(PasswordGeneratorBase):
         The description of the password generator.
     word_list : Sequence[str]
         The list of words to use.
-    count : int
+    word_count : int
         The number of words to use.
     separator: str
         The separator to use between words.
@@ -42,7 +42,7 @@ class XKCDPasswordGenerator(PasswordGeneratorBase):
     description = "Select random words from a list."
 
     def __init__(
-        self, word_list: Sequence[str], count: int = 4, separator: str = " "
+        self, dictionary: Sequence[str], word_count: int = 4, separator: str = " "
     ) -> None:
         """Initialize the password generator.
 
@@ -50,37 +50,37 @@ class XKCDPasswordGenerator(PasswordGeneratorBase):
         ----------
         word_list : Sequence[str]
             The list of words to use.
-        count : int, optional
+        word_count : int, optional
             The number of words to use, by default 4
         separator : str, optional
             The separator to use between words, by default " "
         """
-        self.word_list = word_list
-        self.count = count
+        self.dictionary = dictionary
+        self.word_count = word_count
         self.separator = separator
 
     @property
-    def word_list(self) -> Sequence[str]:
+    def dictionary(self) -> Sequence[str]:
         """The list of words to use."""
-        return self._word_list
+        return self._dictionary
 
-    @word_list.setter
-    def word_list(self, value: Sequence[str]) -> None:
+    @dictionary.setter
+    def dictionary(self, value: Sequence[str]) -> None:
         if not isinstance(value, Sequence):
             raise TypeError(f"Expected a sequence, got {type(value)}")
         if not value:
             raise ValueError("Expected a non-empty sequence")
         if not all(isinstance(word, str) for word in value):
             raise TypeError("Expected a sequence of strings")
-        self._word_list = value
+        self._dictionary = value
 
     @property
-    def count(self) -> int:
+    def word_count(self) -> int:
         """The number of words to use."""
         return self._count
 
-    @count.setter
-    def count(self, value: int) -> None:
+    @word_count.setter
+    def word_count(self, value: int) -> None:
         if not isinstance(value, int):
             raise TypeError(f"Expected int, got {type(value)}")
         if value < 0:
@@ -124,7 +124,9 @@ class XKCDPasswordGenerator(PasswordGeneratorBase):
         Password
             A password and its strength.
         """
-        entropy_per_word = math.log2(len(self.word_list))
-        entropy = entropy_per_word * self.count
-        password = self.separator.join(random.choices(self.word_list, k=self.count))
+        entropy_per_word = math.log2(len(self.dictionary))
+        entropy = entropy_per_word * self.word_count
+        password = self.separator.join(
+            random.choices(self.dictionary, k=self.word_count)
+        )
         return Password(password, entropy)

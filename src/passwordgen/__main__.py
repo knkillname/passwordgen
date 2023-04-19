@@ -70,7 +70,7 @@ class PasswordGen:
         """
         builder = XKCDGeneratorBuilder()
         builder.add_words_from_file(args.word_list)
-        builder.with_count(args.word_count)
+        builder.with_word_count(args.word_count)
         builder.with_separator(args.separator)
         generator = builder.build()
         for password in generator.generate_many_passwords(count=args.count):
@@ -87,7 +87,7 @@ class PasswordGen:
         builder = EasyRandomBuilder()
         builder.add_words_from_file(args.word_list)
         builder.with_length(args.length)
-        builder.add_filler_chars(args.filler_chars)
+        builder.add_filler_characters(args.filler_chars)
         generator = builder.build()
         for password in generator.generate_many_passwords(count=args.count):
             print(password)
