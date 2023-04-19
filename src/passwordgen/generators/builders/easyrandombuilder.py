@@ -60,12 +60,21 @@ class EasyRandomBuilder(PasswordGeneratorBuilder):
         if not self._data_dir.is_dir():
             raise FileNotFoundError(f"Data directory does not exist: {data_dir}")
 
+    @property
+    def data_dir(self) -> Path:
+        """The directory to search for word lists in."""
+        return self._data_dir
+
     def with_length(self, length: int) -> "EasyRandomBuilder":
         """Set the length of the passwords to generate."""
         if not isinstance(length, int):
             raise TypeError(f"Expected int, got {type(length)}")
         self._length = length
         return self
+
+    def get_available_dictionaries(self) -> list[str]:
+        """Get a list of the available word lists."""
+        return [file.stem for file in self._data_dir.iterdir() if file.suffix == ".txt"]
 
     def add_words_from_file(self, file_name: str | Path) -> "EasyRandomBuilder":
         """Add words from a file to the dictionary.
