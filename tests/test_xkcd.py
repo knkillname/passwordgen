@@ -14,21 +14,21 @@ class TestXKCDPasswordGenerator(unittest.TestCase):
         # Attempt to instantiate the class with any wrong type should
         # raise a TypeError.
         with self.assertRaises(TypeError):
-            XKCDPasswordGenerator(word_list=123)
+            XKCDPasswordGenerator(dictionary=123)
         with self.assertRaises(TypeError):
-            XKCDPasswordGenerator(word_list=[123, "a"])
+            XKCDPasswordGenerator(dictionary=[123, "a"])
         with self.assertRaises(TypeError):
-            XKCDPasswordGenerator(count="123", word_list=["a", "b"])
+            XKCDPasswordGenerator(word_count="123", dictionary=["a", "b"])
         with self.assertRaises(TypeError):
-            XKCDPasswordGenerator(separator=123, word_list=["a", "b"])
+            XKCDPasswordGenerator(separator=123, dictionary=["a", "b"])
 
         # Instantiation with an empty list of words should raise a ValueError.
         with self.assertRaises(ValueError):
-            XKCDPasswordGenerator(word_list=[])
+            XKCDPasswordGenerator(dictionary=[])
 
         # Instantiation with a negative count should raise a ValueError.
         with self.assertRaises(ValueError):
-            XKCDPasswordGenerator(word_list=["a", "b"], count=-1)
+            XKCDPasswordGenerator(dictionary=["a", "b"], word_count=-1)
 
     def test_from_word_list_file(self):
         """Test the from_word_list_file method."""
@@ -39,7 +39,7 @@ class TestXKCDPasswordGenerator(unittest.TestCase):
 
             # Test the instantiation of the class from the word list file.
             generator = XKCDPasswordGenerator.from_word_list_file(file.name)
-            self.assertEqual(generator.word_list, ["foo", "bar", "baz", "qux"])
+            self.assertEqual(generator.dictionary, ["foo", "bar", "baz", "qux"])
 
         # Test the instantiation of the class from a non-existing file.
         with self.assertRaises(FileNotFoundError):
@@ -53,7 +53,9 @@ class TestXKCDPasswordGenerator(unittest.TestCase):
         """Test the generation of passwords."""
         word_list = ["foo", "bar", "baz", "qux"]
         # Test the generation of a password with the default parameters.
-        generator = XKCDPasswordGenerator(word_list=word_list, separator="\t", count=4)
+        generator = XKCDPasswordGenerator(
+            dictionary=word_list, separator="\t", word_count=4
+        )
         password = generator.generate_password()
         parts = password.password.split("\t")
         self.assertEqual(len(parts), 4)
