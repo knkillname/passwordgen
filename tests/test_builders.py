@@ -5,14 +5,17 @@ import unittest
 from pathlib import Path
 
 from passwordgen.common import util
-from passwordgen.generators.builders import EasyRandomBuilder, XKCDGeneratorBuilder
-from passwordgen.generators.builders.abc import DictionaryBuilderBase
+from passwordgen.generators.builders import (
+    EasyRandomPasswordGeneratorBuilder,
+    XKCDPasswordGeneratorBuilder,
+)
+from passwordgen.generators.builders.abc import DictionaryPasswordGeneratorBuilderBase
 
 
 class TestDictionaryBuilderBase(unittest.TestCase):
     """Test the DictionaryBuilderBase class."""
 
-    class DummyBuilder(DictionaryBuilderBase):
+    class DummyBuilder(DictionaryPasswordGeneratorBuilderBase):
         """A dummy builder for testing the base class."""
 
         def build(self):
@@ -27,7 +30,7 @@ class TestDictionaryBuilderBase(unittest.TestCase):
         # directly as it is an abstract base class.
         with self.assertRaises(TypeError):
             # pylint: disable=abstract-class-instantiated
-            DictionaryBuilderBase()
+            DictionaryPasswordGeneratorBuilderBase()
 
         # Test that the default dictionaries directory is used if none
         # is specified.
@@ -128,7 +131,7 @@ class TestXKCDGeneratorBuilder(unittest.TestCase):
 
     def test_with_word_count(self):
         """Test the with_word_count method."""
-        builder = XKCDGeneratorBuilder()
+        builder = XKCDPasswordGeneratorBuilder()
         builder.add_words_from_iterable(self.test_words)
         result = builder.with_word_count(5)
         self.assertIs(result, builder)
@@ -137,7 +140,7 @@ class TestXKCDGeneratorBuilder(unittest.TestCase):
 
     def test_with_separator(self):
         """Test the with_separator method."""
-        builder = XKCDGeneratorBuilder()
+        builder = XKCDPasswordGeneratorBuilder()
         builder.add_words_from_iterable(self.test_words)
         result = builder.with_separator("X")
         self.assertIs(result, builder)
@@ -147,7 +150,7 @@ class TestXKCDGeneratorBuilder(unittest.TestCase):
     def test_build(self):
         """Test the build method."""
         instance = (
-            XKCDGeneratorBuilder()
+            XKCDPasswordGeneratorBuilder()
             .with_separator(",")
             .with_word_count(8)
             .add_words_from_iterable(["this", "is", "a", "test"])
@@ -165,7 +168,9 @@ class TestEasyRandomBuilder(unittest.TestCase):
 
     def test_with_length(self):
         """Test the with_length method."""
-        builder = EasyRandomBuilder().add_words_from_iterable(self.dictionary)
+        builder = EasyRandomPasswordGeneratorBuilder().add_words_from_iterable(
+            self.dictionary
+        )
         result = builder.with_length(10)
         self.assertIs(result, builder)
         instance = builder.build()
@@ -178,7 +183,9 @@ class TestEasyRandomBuilder(unittest.TestCase):
 
     def test_add_filler_chars(self):
         """Test the add_filler_chars method."""
-        builder = EasyRandomBuilder().add_words_from_iterable(self.dictionary)
+        builder = EasyRandomPasswordGeneratorBuilder().add_words_from_iterable(
+            self.dictionary
+        )
         result = builder.add_filler_characters("-01")
         self.assertIs(result, builder)
         instance = builder.build()
@@ -191,14 +198,18 @@ class TestEasyRandomBuilder(unittest.TestCase):
 
         # Adding characters two times should extend the list of filler
         # characters.
-        builder = EasyRandomBuilder().add_words_from_iterable(self.dictionary)
+        builder = EasyRandomPasswordGeneratorBuilder().add_words_from_iterable(
+            self.dictionary
+        )
         builder.add_filler_characters("01").add_filler_characters("23")
         instance = builder.build()
         self.assertEqual(instance.filler_characters, "0123")
 
     def test_reset(self):
         """Test the reset method."""
-        builder = EasyRandomBuilder().add_words_from_iterable(self.dictionary)
+        builder = EasyRandomPasswordGeneratorBuilder().add_words_from_iterable(
+            self.dictionary
+        )
         builder.add_filler_characters("01").with_length(10)
         builder.reset()
         builder.add_filler_characters("23").with_length(16)

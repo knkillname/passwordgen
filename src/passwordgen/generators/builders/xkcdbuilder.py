@@ -8,10 +8,10 @@ XKCDGeneratorBuilder
 from pathlib import Path
 
 from ..xkcd import XKCDPasswordGenerator
-from .abc import DictionaryBuilderBase
+from .abc import DictionaryPasswordGeneratorBuilderBase
 
 
-class XKCDGeneratorBuilder(DictionaryBuilderBase):
+class XKCDPasswordGeneratorBuilder(DictionaryPasswordGeneratorBuilderBase):
     """A builder for the XKCD password generator.
 
     This builder allows you to create an XKCD password generator with
@@ -50,7 +50,7 @@ class XKCDGeneratorBuilder(DictionaryBuilderBase):
         self._separator: str
         self.reset()
 
-    def with_word_count(self, word_count: int) -> "XKCDGeneratorBuilder":
+    def with_word_count(self, word_count: int) -> "XKCDPasswordGeneratorBuilder":
         """Set the number of words to generate.
 
         Parameters
@@ -61,7 +61,7 @@ class XKCDGeneratorBuilder(DictionaryBuilderBase):
         self._word_count = word_count
         return self
 
-    def with_separator(self, separator: str) -> "XKCDGeneratorBuilder":
+    def with_separator(self, separator: str) -> "XKCDPasswordGeneratorBuilder":
         """Set the separator to use between words.
 
         Parameters

@@ -29,7 +29,9 @@ class PasswordGeneratorBuilder(metaclass=abc.ABCMeta):
         """Reset the builder."""
 
 
-class DictionaryBuilderBase(PasswordGeneratorBuilder, metaclass=abc.ABCMeta):
+class DictionaryPasswordGeneratorBuilderBase(
+    PasswordGeneratorBuilder, metaclass=abc.ABCMeta
+):
     """Base class for dictionary-based password generator builders.
 
     Attributes
@@ -143,7 +145,9 @@ class DictionaryBuilderBase(PasswordGeneratorBuilder, metaclass=abc.ABCMeta):
         """
         return stripped if (stripped := line.strip()) else None
 
-    def add_words_from_file(self, path: str | Path) -> "DictionaryBuilderBase":
+    def add_words_from_file(
+        self, path: str | Path
+    ) -> "DictionaryPasswordGeneratorBuilderBase":
         """Add words from a file to the dictionary.
 
         If the path does not exists and it is a relative path, then
@@ -177,7 +181,7 @@ class DictionaryBuilderBase(PasswordGeneratorBuilder, metaclass=abc.ABCMeta):
 
     def add_words_from_iterable(
         self, words: Iterable[str], filter_empty: bool = True
-    ) -> "DictionaryBuilderBase":
+    ) -> "DictionaryPasswordGeneratorBuilderBase":
         """Add words from an iterable to the dictionary.
 
         Parameters

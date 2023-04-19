@@ -10,8 +10,8 @@ PasswordGen
 """
 import argparse
 
-from .generators.builders.easyrandombuilder import EasyRandomBuilder
-from .generators.builders.xkcdbuilder import XKCDGeneratorBuilder
+from .generators.builders.easyrandombuilder import EasyRandomPasswordGeneratorBuilder
+from .generators.builders.xkcdbuilder import XKCDPasswordGeneratorBuilder
 from .generators.randomstring import RandomStringPasswordGenerator
 from .generators.xkcd import XKCDPasswordGenerator
 
@@ -68,7 +68,7 @@ class PasswordGen:
         args : argparse.Namespace
             The arguments.
         """
-        builder = XKCDGeneratorBuilder()
+        builder = XKCDPasswordGeneratorBuilder()
         builder.add_words_from_file(args.word_list)
         builder.with_word_count(args.word_count)
         builder.with_separator(args.separator)
@@ -84,7 +84,7 @@ class PasswordGen:
         args : argparse.Namespace
             The arguments.
         """
-        builder = EasyRandomBuilder()
+        builder = EasyRandomPasswordGeneratorBuilder()
         builder.add_words_from_file(args.word_list)
         builder.with_length(args.length)
         builder.add_filler_characters(args.filler_chars)

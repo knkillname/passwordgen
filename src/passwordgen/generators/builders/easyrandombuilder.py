@@ -1,4 +1,4 @@
-"""EasyRandomBuilder class.
+"""EasyRandomPasswordGeneratorBuilder class.
 
 This module contains the EasyRandomBuilder class, which is used to build
 EasyRandomPasswordGenerator instances.
@@ -11,10 +11,10 @@ EasyRandomBuilder
 from pathlib import Path
 
 from ..easyrandom import EasyRandomPasswordGenerator
-from .abc import DictionaryBuilderBase
+from .abc import DictionaryPasswordGeneratorBuilderBase
 
 
-class EasyRandomBuilder(DictionaryBuilderBase):
+class EasyRandomPasswordGeneratorBuilder(DictionaryPasswordGeneratorBuilderBase):
     """Build an EasyRandomPasswordGenerator.
 
     This builder allows you to create an EasyRandomPasswordGenerator
@@ -54,14 +54,14 @@ class EasyRandomBuilder(DictionaryBuilderBase):
         self._length = 16
         self._filler_chars: list[str] | None = None
 
-    def with_length(self, length: int) -> "EasyRandomBuilder":
+    def with_length(self, length: int) -> "EasyRandomPasswordGeneratorBuilder":
         """Set the length of the passwords to generate."""
         if not isinstance(length, int):
             raise TypeError(f"Expected int, got {type(length)}")
         self._length = length
         return self
 
-    def add_filler_characters(self, chars: str) -> "EasyRandomBuilder":
+    def add_filler_characters(self, chars: str) -> "EasyRandomPasswordGeneratorBuilder":
         """Add filler characters from a string.
 
         Parameters
