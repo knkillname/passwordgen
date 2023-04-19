@@ -43,6 +43,11 @@ class EasyRandomPasswordGenerator(PasswordGeneratorBase):
         Generate many passwords.
     """
 
+    # pylint: disable=too-many-instance-attributes
+    # We need a lot of attributes for this class because it has
+    # properties, and we need to store the values of the properties
+    # somewhere.
+
     description = "Easy to memorize password generator"
     name = "Easy random"
 
@@ -50,8 +55,9 @@ class EasyRandomPasswordGenerator(PasswordGeneratorBase):
         self,
         length: int = 16,
         *,
-        dictionary: list[str],
+        dictionary: Sequence[str],
         filler_characters: str = "!@#$%^&*()[]{}_+-=0123456789",
+        max_filler_ratio: float = 1 / 3,
     ):
         """Initialize the generator.
 
@@ -59,7 +65,7 @@ class EasyRandomPasswordGenerator(PasswordGeneratorBase):
         ----------
         length : int, optional
             The length of the generated password, by default 16
-        dictionary : list[str], keyword-only
+        dictionary : Sequence[str], keyword-only
             The list of words to use for generating passwords.
         filler_characters : str, optional, keyword-only
             The characters to use for filling in the gaps between words,
@@ -84,10 +90,12 @@ class EasyRandomPasswordGenerator(PasswordGeneratorBase):
         self._length: int
         self._dictionary: Sequence[str]
         self._filler_characters: str
+        self._max_filler_ratio: float
 
         self.length = length
         self.dictionary = dictionary
         self.filler_characters = filler_characters
+        self.max_filler_ratio = max_filler_ratio
 
     @property
     def length(self) -> int:
@@ -111,11 +119,26 @@ class EasyRandomPasswordGenerator(PasswordGeneratorBase):
     def dictionary(self, value: Sequence[str]) -> None:
         if not isinstance(value, Sequence):
             raise TypeError("Dictionary must be a sequence")
+        if isinstance(value, str):
+            raise TypeError("Dictionary cannot be a single str.")
         if not all(isinstance(word, str) for word in value):
-            raise TypeError("Dictionary must be a list of strings")
+            raise TypeError("Dictionary must be a sequence of strings")
         if not value:
             raise ValueError("Dictionary must not be empty")
         self._dictionary = value
+
+    @property
+    def filler_characters(self) -> str:
+        """The characters to use for filling in the gaps between words."""
+        return self._filler_characters
+
+    @filler_characters.setter
+    def filler_characters(self, value: str) -> None:
+        if not isinstance(value, str):
+            raise TypeError("Filler characters must be a string")
+        if not value:
+            raise ValueError("Filler characters must not be empty")
+        self._filler_characters = value
 
     @property
     def max_filler_ratio(self) -> float:
