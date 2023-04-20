@@ -27,18 +27,23 @@ To generate some random string passwords, use the `random` command:
 
 To generate a sequence of random word password, use the xkcd command:
 
-
     passwordgen xkcd
+
+To generate some password that mix words with special characters use the easy 
+command:
+
+    passwordgen easy
 
 ## Commands
 
 PasswordGen provides the following commands:
 
-    random: Generate a random string password
-    xkcd: Generate a sequence of random word password
+    random: Generate a random string password.
+    xkcd: Generate a sequence of random word password.
+    easy: Generate easy to remember random passwords that mix words with special
+        characters.
 
 Use the --help option for each command to see a full list of options.
-Options
 
 ## Contributing
 

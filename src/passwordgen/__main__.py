@@ -10,8 +10,8 @@ PasswordGen
 """
 import argparse
 
-from .common.classes import Password
-from .generators.builders.xkcdbuilder import XKCDGeneratorBuilder
+from .generators.builders.easyrandombuilder import EasyRandomPasswordGeneratorBuilder
+from .generators.builders.xkcdbuilder import XKCDPasswordGeneratorBuilder
 from .generators.randomstring import RandomStringPasswordGenerator
 from .generators.xkcd import XKCDPasswordGenerator
 
@@ -36,6 +36,8 @@ class PasswordGen:
             self.use_random(args)
         elif args.generator == "xkcd":
             self.use_xkcd(args)
+        elif args.generator == "easy":
+            self.use_easy_random(args)
         else:
             raise ValueError(f"Unknown generator: {args.generator}")
 
@@ -55,7 +57,6 @@ class PasswordGen:
             use_punctuation=args.use_punctuation,
             other_characters=args.other_characters,
         )
-        password: Password
         for password in generator.generate_many_passwords(count=args.count):
             print(password)
 
@@ -67,12 +68,27 @@ class PasswordGen:
         args : argparse.Namespace
             The arguments.
         """
-        builder = XKCDGeneratorBuilder()
+        builder = XKCDPasswordGeneratorBuilder()
         builder.add_words_from_file(args.word_list)
-        builder.with_count(args.word_count)
+        builder.with_word_count(args.word_count)
         builder.with_separator(args.separator)
         generator = builder.build()
-        password: Password
+        for password in generator.generate_many_passwords(count=args.count):
+            print(password)
+
+    def use_easy_random(self, args: argparse.Namespace) -> None:
+        """Use the easy random password generator.
+
+        Parameters
+        ----------
+        args : argparse.Namespace
+            The arguments.
+        """
+        builder = EasyRandomPasswordGeneratorBuilder()
+        builder.add_words_from_file(args.word_list)
+        builder.with_length(args.length)
+        builder.add_filler_characters(args.filler_chars)
+        generator = builder.build()
         for password in generator.generate_many_passwords(count=args.count):
             print(password)
 
@@ -95,6 +111,9 @@ class PasswordGen:
 
         # Add subparser for XKCD password generator
         self._add_xkcd_subparser(subparsers)
+
+        # Add subparser for easy random password generator
+        self._add_easy_random_subparser(subparsers)
 
         return parser
 
@@ -194,6 +213,49 @@ class PasswordGen:
             dest="other_characters",
             default="",
             help="Characters to include in the password",
+        )
+
+    def _add_easy_random_subparser(self, subparsers):
+        """Add a subparser for the easy random string password generator.
+
+        Parameters
+        ----------
+        subparsers : argparse._SubParsersAction
+            The subparsers to add the subparser to.
+        """
+        easy_random_parser = subparsers.add_parser(
+            "easy", help=RandomStringPasswordGenerator.description
+        )
+        easy_random_parser.add_argument(
+            "-c",
+            "--count",
+            type=int,
+            default=10,
+            help="The number of passwords to generate (default: 10)",
+        )
+        # Mimic the arguments from RandomStringPasswordGenerator
+        easy_random_parser.add_argument(
+            "-l",
+            "--length",
+            type=int,
+            default=16,
+            help="The length of the password (default: 16)",
+        )
+        easy_random_parser.add_argument(
+            "-w",
+            "--word-list",
+            dest="word_list",
+            default="en_GB",
+            help="The word list to use (default: en_GB)",
+        )
+        easy_random_parser.add_argument(
+            "--filler",
+            default="!#$%&/=?-+*<>@~0123456789",
+            dest="filler_chars",
+            help=(
+                "Characters to use to fill the password "
+                "(default: !#$%&/=?-+*<>@~0123456789)"
+            ),
         )
 
 
