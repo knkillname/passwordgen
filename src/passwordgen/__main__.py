@@ -113,7 +113,7 @@ class PasswordGen:
         argparse.ArgumentParser
             The argument parser.
         """
-        parser = argparse.ArgumentParser()
+        parser = argparse.ArgumentParser(prog="passwordgen")
         # Add subparser for password generators
         subparsers = parser.add_subparsers(
             title="Password generator",
