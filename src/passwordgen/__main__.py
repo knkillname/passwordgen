@@ -10,8 +10,10 @@ PasswordGen
 """
 import argparse
 
-from .generators.builders.easyrandombuilder import EasyRandomPasswordGeneratorBuilder
-from .generators.builders.xkcdbuilder import XKCDPasswordGeneratorBuilder
+from .generators.builders import (
+    EasyRandomPasswordGeneratorBuilder,
+    XKCDPasswordGeneratorBuilder,
+)
 from .generators.randomstring import RandomStringPasswordGenerator
 from .generators.xkcd import XKCDPasswordGenerator
 
