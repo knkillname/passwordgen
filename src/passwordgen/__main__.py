@@ -9,10 +9,7 @@ PasswordGen
     The main class for the password generator program.
 """
 import argparse
-import tkinter
-
 from . import gui
-
 from .generators.builders.easyrandombuilder import EasyRandomPasswordGeneratorBuilder
 from .generators.builders.xkcdbuilder import XKCDPasswordGeneratorBuilder
 from .generators.randomstring import RandomStringPasswordGenerator
@@ -48,11 +45,7 @@ class PasswordGen:
 
     def use_gui(self) -> None:
         """Use the GUI."""
-        root = tkinter.Tk()
-        root.title("Password Generator")
-        main_frame = gui.MainFrame(root)
-        main_frame.pack(fill=tkinter.BOTH, expand=True)
-        root.mainloop()
+        gui.main()
 
     def use_random(self, args: argparse.Namespace) -> None:
         """Use the random string password generator.

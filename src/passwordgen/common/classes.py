@@ -166,15 +166,18 @@ class Password(NamedTuple):
     password : str
         The password.
     strength : int
-        The strength of the password measured in the minimum number of
-        bits that need to be consumed by a random number generator to
-        create it.
+        The strength of the password measured by the number of bits
+        that need to be consumed by a random number generator to
+        recreate it using the same algorithm.
 
     Methods
     -------
     entropy()
-        Calculate the entropy of the password.
-    time_to_crack(guesses_per_second, brute_force=False)
+        Calculate the entropy of the password. This is the number of
+        bits of information that the password contains assuming that the
+        symbols contained in the password are known but not the password
+        generation algorithm.
+    time_to_crack(guesses_per_second, brute_force=False, method=CrackMethodEnum.BEST)
         Calculate the time to crack the password.
     """
 
@@ -185,9 +188,8 @@ class Password(NamedTuple):
         """Calculate the entropy of the password.
 
         This is the number of bits of information that the password
-        contains and can be used to calculate the time to crack the
-        password with a brute force attack and no knowledge of the
-        password generation algorithm.
+        contains assuming that the symbols contained in the password are
+        known but not the password generation algorithm.
 
         Returns
         -------

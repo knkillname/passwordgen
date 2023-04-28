@@ -1,81 +1,70 @@
-from collections.abc import Sequence
+"""The main frame for the password generator GUI."""
 import tkinter as tk
-import tkinter.ttk as ttk
+from tkinter import ttk
 
 
-# The main frame class for the password generator
-class MainFrame(ttk.Frame):
+class MainFrame(ttk.Frame):  # pylint: disable=too-many-ancestors
     """The main frame for the password generator GUI.
 
     This class is the main frame for the password generator GUI. It
     contains all the widgets and methods for the GUI.
     """
 
-    def __init__(self, master: tk.Tk) -> None:
-        super().__init__(master)
+    def __init__(self, master: tk.Misc, **kwargs) -> None:
+        """Initialize the main frame."""
+        super().__init__(master=master, **kwargs)
         self.password_var: tk.StringVar = tk.StringVar()
-        self.password_label: ttk.Label
+        self.strength_var: tk.IntVar = tk.IntVar()
+        self.method_var: tk.StringVar = tk.StringVar()
+
+        self.password_entry: ttk.Entry
         self.strength_label: ttk.Label
-        self.strength_bar: ttk.Progressbar
+        self.strength_progressbar: ttk.Progressbar
+        self.method_label: ttk.Label
+        self.method_combobox: ttk.Combobox
+        self.options_button: ttk.Button
         self.generate_button: ttk.Button
         self.copy_button: ttk.Button
-        self.options_frame: ttk.Frame
-        self.method_label: ttk.Label
-        self.method_selector: ttk.Combobox
 
         self._create_widgets()
         self._place_widgets()
-        self._use_theme()
+        self._set_theme()
 
     def _create_widgets(self) -> None:
-        """Create all the widgets for the GUI."""
-        self.password_label = ttk.Label(self, textvariable=self.password_var)
-        self.strength_label = ttk.Label(self, text="Password Strength")
-        self.strength_bar = ttk.Progressbar(
-            self, orient=tk.HORIZONTAL, length=4, mode="determinate"
+        """Create the widgets for the main frame."""
+        self.password_entry = ttk.Entry(
+            self, state="readonly", textvariable=self.password_var
         )
-        self.generate_button = ttk.Button(self, text="Generate Password")
-        self.copy_button = ttk.Button(self, text="Copy to Clipboard")
-        self.options_frame = ttk.Frame(self)
-        self.method_label = ttk.Label(self.options_frame, text="Method")
-        self.method_selector = ttk.Combobox(self.options_frame, values=[])
+        self.strength_label = ttk.Label(self, text="Strength:")
+        self.strength_progressbar = ttk.Progressbar(self, variable=self.strength_var)
+        self.method_label = ttk.Label(self, text="Method:")
+        self.method_combobox = ttk.Combobox(
+            self, textvariable=self.method_var, state="readonly"
+        )
+        self.options_button = ttk.Button(self, text="Options")
+        self.generate_button = ttk.Button(self, text="Generate")
+        self.copy_button = ttk.Button(self, text="Copy")
 
     def _place_widgets(self):
-        """Place all the widgets for the GUI."""
-        # Place the password label on the first row
-        self.password_label.grid(row=0, column=0, columnspan=2, sticky="ew")
-        # Place the strength progress bar to the right of the password label
-        self.strength_bar.grid(row=0, column=1, sticky="ew")
-        # Place the strength label below the strength progress bar
-        self.strength_label.grid(row=1, column=1, sticky="ew")
-        # Place the method label on the next row and then the method selector
-        self.method_label.grid(row=2, column=0, sticky="ew")
-        self.method_selector.grid(row=2, column=1, sticky="ew")
-        # Place the options frame below
-        self.options_frame.grid(row=3, column=0, columnspan=2, sticky="ew")
-        # Place the generate and copy buttons below
-        self.generate_button.grid(row=4, column=0, sticky="ew")
-        self.copy_button.grid(row=4, column=1, sticky="ew")
+        """Place the widgets in the main frame."""
+        # Set the column and row weights and padding.
+        for j in range(3):
+            self.columnconfigure(j, weight=1, pad=8)
+        for i in range(4):
+            self.rowconfigure(i, weight=1, pad=8)
 
-        # Set the weights for the rows and columns
-        self.rowconfigure(0, weight=1)
-        self.rowconfigure(1, weight=1)
-        self.rowconfigure(2, weight=1)
-        self.rowconfigure(3, weight=1)
-        self.rowconfigure(4, weight=1)
-        self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
+        # Place the widgets.
+        self.password_entry.grid(row=0, column=0, columnspan=3, sticky=tk.EW)
+        self.strength_label.grid(row=1, column=0, sticky=tk.W)
+        self.strength_progressbar.grid(row=1, column=1, columnspan=2, sticky=tk.EW)
+        self.method_label.grid(row=2, column=0, sticky=tk.W)
+        self.method_combobox.grid(row=2, column=1, columnspan=2, sticky=tk.EW)
+        self.options_button.grid(row=3, column=0, sticky=tk.EW)
+        self.generate_button.grid(row=3, column=1, sticky=tk.EW, padx=(8, 0))
+        self.copy_button.grid(row=3, column=2, sticky=tk.EW, padx=(8, 0))
+        self.grid(sticky=tk.NSEW)
 
-    def _use_theme(self) -> None:
-        """Use the theme for the GUI."""
-        style = ttk.Style()
+    def _set_theme(self) -> None:
+        # Set the clam ttk theme.
+        style = ttk.Style(self)
         style.theme_use("clam")
-
-    def set_method_names(self, names: Sequence[str]) -> None:
-        """Set the names of the password generation methods."""
-        if not isinstance(names, Sequence):
-            raise TypeError(f"Expected a sequence, got {type(names)}")
-        for name in names:
-            if not isinstance(name, str):
-                raise TypeError(f"Expected a sequence of str, got {type(name)}")
-        self.method_selector["values"] = list(names)
