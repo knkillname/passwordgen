@@ -13,3 +13,10 @@ from .abc import PasswordGeneratorBase
 from .builders.xkcdbuilder import XKCDPasswordGeneratorBuilder
 from .randomstring import RandomStringPasswordGenerator
 from .xkcd import XKCDPasswordGenerator
+
+__all__ = [
+    "PasswordGeneratorBase",
+    "RandomStringPasswordGenerator",
+    "XKCDPasswordGenerator",
+    "XKCDPasswordGeneratorBuilder",
+]

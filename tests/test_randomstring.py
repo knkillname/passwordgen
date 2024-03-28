@@ -8,7 +8,7 @@ from passwordgen.generators import RandomStringPasswordGenerator
 class TestRandomStringPasswordGenerator(unittest.TestCase):
     """Test the random string password generator."""
 
-    def test_instantiation(self):
+    def test_instantiation(self) -> None:
         """Test instantiating the password generator."""
         generator = RandomStringPasswordGenerator()
         self.assertEqual(generator.length, 8)
@@ -20,23 +20,23 @@ class TestRandomStringPasswordGenerator(unittest.TestCase):
 
         # Using any wrong argument type should rise an error
         with self.assertRaises(TypeError):
-            RandomStringPasswordGenerator(length="8")
+            RandomStringPasswordGenerator(length="8")  # type: ignore
         with self.assertRaises(TypeError):
-            RandomStringPasswordGenerator(use_uppercase="True")
+            RandomStringPasswordGenerator(use_uppercase="True")  # type: ignore
         with self.assertRaises(TypeError):
-            RandomStringPasswordGenerator(use_lowercase="True")
+            RandomStringPasswordGenerator(use_lowercase="True")  # type: ignore
         with self.assertRaises(TypeError):
-            RandomStringPasswordGenerator(use_digits="True")
+            RandomStringPasswordGenerator(use_digits="True")  # type: ignore
         with self.assertRaises(TypeError):
-            RandomStringPasswordGenerator(use_punctuation="True")
+            RandomStringPasswordGenerator(use_punctuation="True")  # type: ignore
         with self.assertRaises(TypeError):
-            RandomStringPasswordGenerator(other_characters=1)
+            RandomStringPasswordGenerator(other_characters=1)  # type: ignore
 
         # Using a negative length should rise an error
         with self.assertRaises(ValueError):
             RandomStringPasswordGenerator(length=-1)
 
-    def test_generate_password(self):
+    def test_generate_password(self) -> None:
         """Test generating a password."""
         # Using the default options should generate a password of the
         # default length with the default characters
@@ -94,7 +94,7 @@ class TestRandomStringPasswordGenerator(unittest.TestCase):
         self.assertEqual(len(password.password), 16)
         self.assertTrue(all(char in string.digits for char in password.password))
 
-    def test_generate_many_passwords(self):
+    def test_generate_many_passwords(self) -> None:
         """Test generating many passwords."""
         # Using the default options should generate a password of the
         # default length with the default characters

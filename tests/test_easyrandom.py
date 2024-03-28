@@ -1,4 +1,5 @@
 """Test the EasyRandomPasswordGenerator class."""
+
 import re
 import unittest
 
@@ -10,7 +11,7 @@ class TestEasyRandom(unittest.TestCase):
 
     dictionary = ["this", "is", "a", "test"]
 
-    def test_init(self):
+    def test_init(self) -> None:
         """Test initialization of the generator."""
         # Test default values
         generator = EasyRandomPasswordGenerator(dictionary=self.dictionary)
@@ -37,15 +38,15 @@ class TestEasyRandom(unittest.TestCase):
             EasyRandomPasswordGenerator(dictionary="this is a test")
         # Attempt to initialize with a non-sequence dictionary
         with self.assertRaises(TypeError):
-            EasyRandomPasswordGenerator(dictionary=123)
+            EasyRandomPasswordGenerator(dictionary=123)  # type: ignore
         # Attempt to initialize with a dictionary with some non-string
         # values
         with self.assertRaises(TypeError):
-            EasyRandomPasswordGenerator(dictionary=["this", "is", 123, "test"])
+            EasyRandomPasswordGenerator(dictionary=[123, "test"])  # type: ignore
         # Attempt to initialize with a non-string filler_characters
         with self.assertRaises(TypeError):
             EasyRandomPasswordGenerator(
-                dictionary=self.dictionary, filler_characters=123
+                dictionary=self.dictionary, filler_characters=123  # type: ignore
             )
         # Attempt to initialize with an empty filler_characters
         with self.assertRaises(ValueError):
@@ -54,7 +55,9 @@ class TestEasyRandom(unittest.TestCase):
             )
         # Attempt to initialize with a non-integer length
         with self.assertRaises(TypeError):
-            EasyRandomPasswordGenerator(dictionary=self.dictionary, length="16")
+            EasyRandomPasswordGenerator(
+                dictionary=self.dictionary, length="16"  # type: ignore
+            )
         # Attempt to initialize with a length less than 1
         with self.assertRaises(ValueError):
             EasyRandomPasswordGenerator(dictionary=self.dictionary, length=0)
@@ -72,10 +75,10 @@ class TestEasyRandom(unittest.TestCase):
         # float
         with self.assertRaises(TypeError):
             EasyRandomPasswordGenerator(
-                dictionary=self.dictionary, max_filler_ratio="0.5"
+                dictionary=self.dictionary, max_filler_ratio="0.5"  # type: ignore
             )
 
-    def test_generate_password(self):
+    def test_generate_password(self) -> None:
         """ "Test the generate_password method."""
 
         # Test default values

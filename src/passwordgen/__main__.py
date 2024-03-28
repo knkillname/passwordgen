@@ -8,10 +8,15 @@ Classes
 PasswordGen
     The main class for the password generator program.
 """
-import argparse
 
-from .generators.builders.easyrandombuilder import EasyRandomPasswordGeneratorBuilder
-from .generators.builders.xkcdbuilder import XKCDPasswordGeneratorBuilder
+import argparse
+import sys
+from argparse import ArgumentParser, Namespace, _SubParsersAction
+
+from .generators.builders import (
+    EasyRandomPasswordGeneratorBuilder,
+    XKCDPasswordGeneratorBuilder,
+)
 from .generators.randomstring import RandomStringPasswordGenerator
 from .generators.xkcd import XKCDPasswordGenerator
 
@@ -19,11 +24,8 @@ from .generators.xkcd import XKCDPasswordGenerator
 class PasswordGen:
     """The main class for the password generator program."""
 
-    def __init__(self):
-        """Initialize the program."""
-        self.parser = self.create_parser()
-
-    def main(self) -> None:
+    @classmethod
+    def main(cls, *args: str) -> None:
         """Run the program.
 
         Raises
@@ -31,17 +33,19 @@ class PasswordGen:
         ValueError
             If the generator is unknown.
         """
-        args = self.parser.parse_args()
-        if args.generator == "random":
-            self.use_random(args)
-        elif args.generator == "xkcd":
-            self.use_xkcd(args)
-        elif args.generator == "easy":
-            self.use_easy_random(args)
+        parser = cls.create_parser()
+        namespace = parser.parse_args(args)
+        if namespace.generator == "random":
+            cls.use_random(namespace)
+        elif namespace.generator == "xkcd":
+            cls.use_xkcd(namespace)
+        elif namespace.generator == "easy":
+            cls.use_easy_random(namespace)
         else:
-            raise ValueError(f"Unknown generator: {args.generator}")
+            raise ValueError(f"Unknown generator: {namespace.generator}")
 
-    def use_random(self, args: argparse.Namespace) -> None:
+    @classmethod
+    def use_random(cls, args: Namespace) -> None:
         """Use the random string password generator.
 
         Parameters
@@ -60,7 +64,8 @@ class PasswordGen:
         for password in generator.generate_many_passwords(count=args.count):
             print(password)
 
-    def use_xkcd(self, args: argparse.Namespace) -> None:
+    @classmethod
+    def use_xkcd(cls, args: argparse.Namespace) -> None:
         """Use the XKCD password generator.
 
         Parameters
@@ -76,7 +81,8 @@ class PasswordGen:
         for password in generator.generate_many_passwords(count=args.count):
             print(password)
 
-    def use_easy_random(self, args: argparse.Namespace) -> None:
+    @classmethod
+    def use_easy_random(cls, args: argparse.Namespace) -> None:
         """Use the easy random password generator.
 
         Parameters
@@ -85,39 +91,47 @@ class PasswordGen:
             The arguments.
         """
         builder = EasyRandomPasswordGeneratorBuilder()
-        builder.add_words_from_file(args.word_list)
+        try:
+            builder.add_words_from_file(args.word_list)
+        except FileNotFoundError:
+            print(f"Could not find word list: {args.word_list}")
+            available = builder.get_available_dictionaries()
+            print(f'Available word lists: {{{", ".join(available)}}}')
+            raise
         builder.with_length(args.length)
         builder.add_filler_characters(args.filler_chars)
         generator = builder.build()
         for password in generator.generate_many_passwords(count=args.count):
             print(password)
 
-    def create_parser(self) -> argparse.ArgumentParser:
+    @classmethod
+    def create_parser(cls) -> ArgumentParser:
         """Create the argument parser for the program.
 
         Returns
         -------
-        argparse.ArgumentParser
+        ArgumentParser
             The argument parser.
         """
-        parser = argparse.ArgumentParser()
+        parser = ArgumentParser(prog="passwordgen")
         # Add subparser for password generators
-        subparsers = parser.add_subparsers(
-            title="Password generator", dest="generator", required=True
-        )
+        subparsers = parser.add_subparsers(title="Password generator", dest="generator")
 
         # Add subparser for random string password generator
-        self._add_random_subparser(subparsers)
+        cls._add_random_subparser(subparsers)
 
         # Add subparser for XKCD password generator
-        self._add_xkcd_subparser(subparsers)
+        cls._add_xkcd_subparser(subparsers)
 
         # Add subparser for easy random password generator
-        self._add_easy_random_subparser(subparsers)
+        cls._add_easy_random_subparser(subparsers)
 
         return parser
 
-    def _add_xkcd_subparser(self, subparsers: argparse._SubParsersAction):
+    @classmethod
+    def _add_xkcd_subparser(
+        cls, subparsers: "_SubParsersAction[ArgumentParser]"
+    ) -> None:
         """Add a subparser for the XKCD password generator.
 
         Parameters
@@ -158,7 +172,10 @@ class PasswordGen:
             help="The separator to use between words (default: ' ')",
         )
 
-    def _add_random_subparser(self, subparsers):
+    @classmethod
+    def _add_random_subparser(
+        cls, subparsers: "_SubParsersAction[ArgumentParser]"
+    ) -> None:
         """Add a subparser for the random string password generator.
 
         Parameters
@@ -215,7 +232,10 @@ class PasswordGen:
             help="Characters to include in the password",
         )
 
-    def _add_easy_random_subparser(self, subparsers):
+    @classmethod
+    def _add_easy_random_subparser(
+        cls, subparsers: "_SubParsersAction[ArgumentParser]"
+    ) -> None:
         """Add a subparser for the easy random string password generator.
 
         Parameters
@@ -254,11 +274,10 @@ class PasswordGen:
             dest="filler_chars",
             help=(
                 "Characters to use to fill the password "
-                "(default: !#$%&/=?-+*<>@~0123456789)"
+                "(default: !#$%%&/=?-+*<>@~0123456789)"
             ),
         )
 
 
 if __name__ == "__main__":
-    application = PasswordGen()
-    application.main()
+    PasswordGen.main(*sys.argv[1:])
