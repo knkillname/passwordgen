@@ -8,7 +8,7 @@ GeneratorBuilder
 
 import abc
 from pathlib import Path
-from typing import Iterable
+from typing import Iterable, Self
 
 from passwordgen.common import util
 
@@ -181,7 +181,7 @@ class DictionaryPasswordGeneratorBuilderBase(
 
     def add_words_from_iterable(
         self, words: Iterable[str], filter_empty: bool = True
-    ) -> "DictionaryPasswordGeneratorBuilderBase":
+    ) -> Self:
         """Add words from an iterable to the dictionary.
 
         Parameters

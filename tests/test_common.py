@@ -1,4 +1,5 @@
 """Test the common module."""
+
 import unittest
 from unittest import mock
 
@@ -8,7 +9,7 @@ from passwordgen.common import CrackMethodEnum, Duration, Password, util
 class TestCommon(unittest.TestCase):
     """Test the common module."""
 
-    def test_password(self):
+    def test_password(self) -> None:
         """Test the Password class."""
         # Test instantiating a password.
         password = Password("password", 42)
@@ -41,7 +42,7 @@ class TestCommon(unittest.TestCase):
         result = str(Password("sequoia", 42))
         self.assertIn("sequoia", result)
 
-    def test_duration(self):
+    def test_duration(self) -> None:
         """Test the Duration class."""
         # Test instantiating a duration.
         duration = Duration(years=1, days=2, hours=3, minutes=4, seconds=5)
@@ -74,7 +75,7 @@ class TestCommon(unittest.TestCase):
         self.assertEqual(Duration(seconds=2).describe(), "2 seconds")
         self.assertEqual(Duration(seconds=0).describe(), "Less than a second")
 
-    def test_entropy(self):
+    def test_entropy(self) -> None:
         """Test the entropy function."""
         # Test calculating the entropy of a probability distribution.
         self.assertEqual(util.entropy([1]), 0.0)
@@ -83,7 +84,7 @@ class TestCommon(unittest.TestCase):
 
         # Test type checking.
         with self.assertRaises(TypeError):
-            util.entropy(1)
+            util.entropy(1)  # type: ignore
 
         # Test value checking.
         with self.assertRaises(ValueError):
@@ -92,13 +93,13 @@ class TestCommon(unittest.TestCase):
         with self.assertRaises(ValueError):
             util.entropy([0, 0, 0, 0])
 
-    def test_get_resource_path(self):
+    def test_get_resource_path(self) -> None:
         """Test the get_resource_path function."""
         # Test getting the path to a resource.
         path = util.get_resource_path("test.txt")
         self.assertEqual("test.txt", path.parts[-1])
 
-    def test_normalize_time(self):
+    def test_normalize_time(self) -> None:
         """Test the normalize_time function."""
         # The util.normalize_time function is used in the Duration class
         # to normalize the number of seconds, minutes, hours, and days

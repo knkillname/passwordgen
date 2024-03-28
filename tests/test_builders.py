@@ -18,19 +18,19 @@ class TestDictionaryBuilderBase(unittest.TestCase):
     class DummyBuilder(DictionaryPasswordGeneratorBuilderBase):
         """A dummy builder for testing the base class."""
 
-        def build(self):
+        def build(self) -> None:  # type: ignore
             pass
 
-        def reset(self):
+        def reset(self) -> None:
             pass
 
-    def test_init(self):
+    def test_init(self) -> None:
         """Test the instance initialization."""
         # Test that DictionaryBuilderBase cannot be instantiated
         # directly as it is an abstract base class.
         with self.assertRaises(TypeError):
             # pylint: disable=abstract-class-instantiated
-            DictionaryPasswordGeneratorBuilderBase()
+            DictionaryPasswordGeneratorBuilderBase()  # type: ignore
 
         # Test that the default dictionaries directory is used if none
         # is specified.
@@ -56,13 +56,13 @@ class TestDictionaryBuilderBase(unittest.TestCase):
         # Test that a TypeError is raised if the specified data
         # directory is not a string or Path.
         with self.assertRaises(TypeError):
-            type(self).DummyBuilder(123)
+            type(self).DummyBuilder(123)  # type: ignore
 
         builder = type(self).DummyBuilder()
         with self.assertRaises(TypeError):
-            builder.dictionaries_dir = 123
+            builder.dictionaries_dir = 123  # type: ignore
 
-    def test_parse_word(self):
+    def test_parse_word(self) -> None:
         """Test the default implementation of parse_word."""
         builder = type(self).DummyBuilder()
         self.assertEqual(builder.parse_word("test"), "test")
@@ -70,7 +70,7 @@ class TestDictionaryBuilderBase(unittest.TestCase):
         self.assertIsNone(builder.parse_word(""))
         self.assertIsNone(builder.parse_word(" \t\r\n"))
 
-    def test_get_available_dictionaries(self):
+    def test_get_available_dictionaries(self) -> None:
         """Test the get_available_dictionaries method."""
         # Create a temporary directory to test with.
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -81,7 +81,7 @@ class TestDictionaryBuilderBase(unittest.TestCase):
             # The test dictionary should be found.
             self.assertIn("test", builder.get_available_dictionaries())
 
-    def test_add_words_from_file(self):
+    def test_add_words_from_file(self) -> None:
         """Test the add_words_from_file method."""
         builder = type(self).DummyBuilder()
         # Create a temporary file to test with.
@@ -99,9 +99,9 @@ class TestDictionaryBuilderBase(unittest.TestCase):
         # Attempting to add words from a non file should result in a
         # TypeError.
         with self.assertRaises(TypeError):
-            builder.add_words_from_file(123)
+            builder.add_words_from_file(123)  # type: ignore
 
-    def test_add_words_from_iterable(self):
+    def test_add_words_from_iterable(self) -> None:
         """Test the add_words_from_iterable method."""
         builder = type(self).DummyBuilder()
         builder.add_words_from_iterable(["this", "is", "a", "test"], filter_empty=False)
@@ -119,9 +119,9 @@ class TestDictionaryBuilderBase(unittest.TestCase):
         # Attempting to add words from a non iterable of strings should
         # result in a TypeError.
         with self.assertRaises(TypeError):
-            builder.add_words_from_iterable(123)
+            builder.add_words_from_iterable(123)  # type: ignore
         with self.assertRaises(TypeError):
-            builder.add_words_from_iterable(["this", 123])
+            builder.add_words_from_iterable(["this", 123])  # type: ignore
 
 
 class TestXKCDGeneratorBuilder(unittest.TestCase):
@@ -129,7 +129,7 @@ class TestXKCDGeneratorBuilder(unittest.TestCase):
 
     test_words = ["this", "is", "a", "test"]
 
-    def test_with_word_count(self):
+    def test_with_word_count(self) -> None:
         """Test the with_word_count method."""
         builder = XKCDPasswordGeneratorBuilder()
         builder.add_words_from_iterable(self.test_words)
@@ -138,7 +138,7 @@ class TestXKCDGeneratorBuilder(unittest.TestCase):
         instance = builder.build()
         self.assertEqual(instance.word_count, 5)
 
-    def test_with_separator(self):
+    def test_with_separator(self) -> None:
         """Test the with_separator method."""
         builder = XKCDPasswordGeneratorBuilder()
         builder.add_words_from_iterable(self.test_words)
@@ -147,7 +147,7 @@ class TestXKCDGeneratorBuilder(unittest.TestCase):
         instance = builder.build()
         self.assertEqual(instance.separator, "X")
 
-    def test_build(self):
+    def test_build(self) -> None:
         """Test the build method."""
         instance = (
             XKCDPasswordGeneratorBuilder()
@@ -166,7 +166,7 @@ class TestEasyRandomBuilder(unittest.TestCase):
 
     dictionary = ["this", "is", "a", "test"]
 
-    def test_with_length(self):
+    def test_with_length(self) -> None:
         """Test the with_length method."""
         builder = EasyRandomPasswordGeneratorBuilder().add_words_from_iterable(
             self.dictionary
@@ -179,9 +179,9 @@ class TestEasyRandomBuilder(unittest.TestCase):
         # Attempting to set the length to a non integer should result in
         # a TypeError.
         with self.assertRaises(TypeError):
-            builder.with_length("10")
+            builder.with_length("10")  # type: ignore
 
-    def test_add_filler_chars(self):
+    def test_add_filler_chars(self) -> None:
         """Test the add_filler_chars method."""
         builder = EasyRandomPasswordGeneratorBuilder().add_words_from_iterable(
             self.dictionary
@@ -194,7 +194,7 @@ class TestEasyRandomBuilder(unittest.TestCase):
         # Attempting to add filler characters that are not strings
         # should result in a TypeError.
         with self.assertRaises(TypeError):
-            builder.add_filler_characters(123)
+            builder.add_filler_characters(123)  # type: ignore
 
         # Adding characters two times should extend the list of filler
         # characters.
@@ -205,7 +205,7 @@ class TestEasyRandomBuilder(unittest.TestCase):
         instance = builder.build()
         self.assertEqual(instance.filler_characters, "0123")
 
-    def test_reset(self):
+    def test_reset(self) -> None:
         """Test the reset method."""
         builder = EasyRandomPasswordGeneratorBuilder().add_words_from_iterable(
             self.dictionary

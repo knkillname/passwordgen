@@ -198,7 +198,13 @@ class EasyRandomPasswordGenerator(PasswordGeneratorBase):
 
         return Password(password, entropy)
 
-    def _compute_entropy(self, dictionary, fillers, selected_words, buckets):
+    def _compute_entropy(
+        self,
+        dictionary: Sequence[str],
+        fillers: Sequence[str],
+        selected_words: Sequence[str],
+        buckets: Sequence[Sequence[str]],
+    ) -> float:
         word_entropy = math.log2(len(dictionary))
         filler_entropy = math.log2(len(fillers))
         words_length = sum(len(word) for word in selected_words)
