@@ -5,6 +5,7 @@ Classes
 RandomStringPasswordGenerator
     Generate a random string of characters.
 """
+
 import math
 import string
 from random import SystemRandom
@@ -92,7 +93,7 @@ class RandomStringPasswordGenerator(PasswordGeneratorBase):
         ValueError
             If the length is negative.
         """
-        self._charset: str
+        self._charset: list[str]
         self._length: int
         self._use_uppercase: bool
         self._use_lowercase: bool
@@ -115,7 +116,7 @@ class RandomStringPasswordGenerator(PasswordGeneratorBase):
         return self._length
 
     @length.setter
-    def length(self, value: int):
+    def length(self, value: int) -> None:
         if not isinstance(value, int):
             raise TypeError(f"Expected int, got {type(value)}")
         if value < 0:
@@ -128,7 +129,7 @@ class RandomStringPasswordGenerator(PasswordGeneratorBase):
         return self._use_uppercase
 
     @use_uppercase.setter
-    def use_uppercase(self, value: bool):
+    def use_uppercase(self, value: bool) -> None:
         if not isinstance(value, bool):
             raise TypeError(f"Expected bool, got {type(value)}")
         self._use_uppercase = value
@@ -139,7 +140,7 @@ class RandomStringPasswordGenerator(PasswordGeneratorBase):
         return self._use_lowercase
 
     @use_lowercase.setter
-    def use_lowercase(self, value: bool):
+    def use_lowercase(self, value: bool) -> None:
         if not isinstance(value, bool):
             raise TypeError(f"Expected bool, got {type(value)}")
         self._use_lowercase = value
@@ -150,7 +151,7 @@ class RandomStringPasswordGenerator(PasswordGeneratorBase):
         return self._use_digits
 
     @use_digits.setter
-    def use_digits(self, value: bool):
+    def use_digits(self, value: bool) -> None:
         if not isinstance(value, bool):
             raise TypeError(f"Expected bool, got {type(value)}")
         self._use_digits = value
@@ -161,7 +162,7 @@ class RandomStringPasswordGenerator(PasswordGeneratorBase):
         return self._use_punctuation
 
     @use_punctuation.setter
-    def use_punctuation(self, value: bool):
+    def use_punctuation(self, value: bool) -> None:
         if not isinstance(value, bool):
             raise TypeError(f"Expected bool, got {type(value)}")
         self._use_punctuation = value
@@ -172,12 +173,12 @@ class RandomStringPasswordGenerator(PasswordGeneratorBase):
         return self._other_characters
 
     @other_characters.setter
-    def other_characters(self, value: str):
+    def other_characters(self, value: str) -> None:
         if not isinstance(value, str):
             raise TypeError(f"Expected str, got {type(value)}")
         self._other_characters = value
 
-    def _update_charset(self):
+    def _update_charset(self) -> None:
         """Update the character set."""
         self._charset = []
         if self.use_uppercase:
