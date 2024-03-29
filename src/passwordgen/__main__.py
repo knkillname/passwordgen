@@ -91,13 +91,17 @@ class PasswordGen:
             The arguments.
         """
         builder = EasyRandomPasswordGeneratorBuilder()
+        if args.list_dictionaries:
+            available = builder.get_available_dictionaries()
+            print(f'Available word lists: {{{", ".join(available)}}}')
+            sys.exit(0)
         try:
             builder.add_words_from_file(args.word_list)
         except FileNotFoundError:
             print(f"Could not find word list: {args.word_list}")
             available = builder.get_available_dictionaries()
             print(f'Available word lists: {{{", ".join(available)}}}')
-            raise
+            sys.exit(1)
         builder.with_length(args.length)
         builder.add_filler_characters(args.filler_chars)
         generator = builder.build()
@@ -115,7 +119,9 @@ class PasswordGen:
         """
         parser = ArgumentParser(prog="passwordgen")
         # Add subparser for password generators
-        subparsers = parser.add_subparsers(title="Password generator", dest="generator")
+        subparsers = parser.add_subparsers(
+            title="Password generator", dest="generator", required=True
+        )
 
         # Add subparser for random string password generator
         cls._add_random_subparser(subparsers)
@@ -269,6 +275,12 @@ class PasswordGen:
             help="The word list to use (default: en_GB)",
         )
         easy_random_parser.add_argument(
+            "--list",
+            action="store_true",
+            dest="list_dictionaries",
+            help="List available word lists",
+        )
+        easy_random_parser.add_argument(
             "--filler",
             default="!#$%&/=?-+*<>@~0123456789",
             dest="filler_chars",
@@ -279,5 +291,10 @@ class PasswordGen:
         )
 
 
-if __name__ == "__main__":
+def entry_point() -> None:
+    """Entry point for the password generator program."""
     PasswordGen.main(*sys.argv[1:])
+
+
+if __name__ == "__main__":
+    entry_point()
