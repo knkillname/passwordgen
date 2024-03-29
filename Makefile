@@ -11,6 +11,27 @@ export PIPENV_VERBOSITY
 # Default target
 default: check_pipenv venv format lint test
 
+# Ensure that user packages can be run and install the package
+install:
+	@if [ ! -z "$${PATH##*:$${HOME}/.local/bin*}" ]; then \
+		echo "'~/.local/bin' is not in PATH, so no user packages can run."; \
+		echo "would you like to add it to PATH? [y/N]"; \
+		read -r response; \
+		if [ "$$response" = "y" ]; then \
+			if [ -f ~/.bashrc ]; then \
+				echo "export PATH=\"$$PATH:$$HOME/.local/bin\"" >> ~/.bashrc; \
+			fi; \
+			if [ -f ~/.zshrc ]; then \
+				echo "export PATH=\"$$PATH:$$HOME/.local/bin\"" >> ~/.zshrc; \
+			fi; \
+			echo "Please restart your shell to apply changes."; \
+		fi; \
+	fi
+	pip3 install --user --break-system-packages .
+
+uninstall:
+	pip3 uninstall --break-system-packages passwordgen
+
 # Check if Pipenv is installed
 check_pipenv:
 	@which pipenv > /dev/null \
@@ -38,6 +59,10 @@ lint: check_pipenv venv
 test: check_pipenv venv
 	pipenv run coverage run -m unittest discover -v -s ./tests -p 'test_*.py'
 	pipenv run coverage report -m
+
+# Build package as a wheel
+build: check_pipenv venv
+	pipenv run pip3 wheel --no-deps --wheel-dir dist .
 
 # Clean up
 clean:

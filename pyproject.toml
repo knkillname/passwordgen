@@ -24,4 +24,4 @@ profile = "black"
 max-line-length = "88"
 
 [project.scripts]
-passwordgen = "passwordgen.__main__:main"
+passwordgen = "passwordgen.__main__:entry_point"
