@@ -7,7 +7,7 @@ from importlib.resources import files
 from pathlib import Path
 from typing import Final
 
-from secure_passwords.config.schema import WordlistsConfig
+from passwordgen.config.schema import WordlistsConfig
 
 _EMBEDDED_MAP: Final[dict[str, str]] = {
     "en": "eff_large.txt",
@@ -67,7 +67,7 @@ class WordlistLoader:
         if not filename:
             return []
 
-        resource = files("secure_passwords.wordlists").joinpath(filename)
+        resource = files("passwordgen.wordlists").joinpath(filename)
         return self._read_text(resource.read_text(encoding="utf-8"))
 
     def clear_cache(self) -> None:

@@ -8,7 +8,7 @@ from dataclasses import replace
 from pathlib import Path
 from typing import Any
 
-from secure_passwords.config.schema import (
+from passwordgen.config.schema import (
     AlternatingDefaults,
     AppConfig,
     SymbolsDefaults,
@@ -34,8 +34,8 @@ class ConfigManager:
     ----------
     config_path : Path | None, optional
         Custom path to the JSON file. If omitted, the manager resolves to
-        XDG config location (`$XDG_CONFIG_HOME/secure_passwords/config.json`) or
-        `~/.config/secure_passwords/config.json`.
+        XDG config location (`$XDG_CONFIG_HOME/passwordgen/config.json`) or
+        `~/.config/passwordgen/config.json`.
     """
 
     def __init__(self, config_path: Path | None = None) -> None:
@@ -52,7 +52,7 @@ class ConfigManager:
         """
 
         base_dir = Path(os.environ.get("XDG_CONFIG_HOME", Path.home() / ".config"))
-        return base_dir / "secure_passwords" / "config.json"
+        return base_dir / "passwordgen" / "config.json"
 
     @property
     def config_path(self) -> Path:

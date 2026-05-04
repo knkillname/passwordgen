@@ -9,16 +9,16 @@ from pathlib import Path
 from tkinter import filedialog, messagebox, ttk
 from typing import Callable, cast
 
-from secure_passwords.config.manager import ConfigManager
-from secure_passwords.config.schema import (
+from passwordgen.config.manager import ConfigManager
+from passwordgen.config.schema import (
     AlternatingDefaults,
     AppConfig,
     SymbolsDefaults,
     WordlistsConfig,
     WordsDefaults,
 )
-from secure_passwords.i18n import _
-from secure_passwords.wordlists.downloader import KNOWN_DICTS, HunspellDownloader
+from passwordgen.i18n import _
+from passwordgen.wordlists.downloader import KNOWN_DICTS, HunspellDownloader
 
 
 class SettingsDialog(tk.Toplevel):
@@ -239,9 +239,7 @@ class SettingsDialog(tk.Toplevel):
         self._wordlist_status[language].set(_("embedded"))
 
     def _download_dictionary(self, language: str) -> None:
-        target = (
-            Path.home() / ".local" / "share" / "secure_passwords" / f"{language}.txt"
-        )
+        target = Path.home() / ".local" / "share" / "passwordgen" / f"{language}.txt"
 
         self.download_progress.start(8)
 

@@ -6,12 +6,12 @@ import tkinter as tk
 from abc import ABC, abstractmethod
 from tkinter import ttk
 
-from secure_passwords.config.schema import AppConfig
-from secure_passwords.generators.alternating import AlternatingConfig
-from secure_passwords.generators.symbols import SymbolsConfig
-from secure_passwords.generators.words import WordsConfig
-from secure_passwords.i18n import _
-from secure_passwords.wordlists import available_dictionary_keys
+from passwordgen.config.schema import AppConfig
+from passwordgen.generators.alternating import AlternatingConfig
+from passwordgen.generators.symbols import SymbolsConfig
+from passwordgen.generators.words import WordsConfig
+from passwordgen.i18n import _
+from passwordgen.wordlists import available_dictionary_keys
 
 
 class BaseConfigFrame(ttk.Frame, ABC):

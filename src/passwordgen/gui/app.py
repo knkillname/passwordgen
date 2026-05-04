@@ -6,20 +6,20 @@ import tkinter as tk
 import tkinter.font as tkfont
 from tkinter import messagebox, ttk
 
-from secure_passwords.config.manager import ConfigManager
-from secure_passwords.generators.alternating import AlternatingGenerator
-from secure_passwords.generators.symbols import RandomSymbolsGenerator
-from secure_passwords.generators.words import RandomWordsGenerator
-from secure_passwords.gui.config_frames import (
+from passwordgen.config.manager import ConfigManager
+from passwordgen.generators.alternating import AlternatingGenerator
+from passwordgen.generators.symbols import RandomSymbolsGenerator
+from passwordgen.generators.words import RandomWordsGenerator
+from passwordgen.gui.config_frames import (
     AlternatingConfigFrame,
     SymbolsConfigFrame,
     WordsConfigFrame,
 )
-from secure_passwords.gui.results_frame import ResultsFrame
-from secure_passwords.gui.settings_dialog import SettingsDialog
-from secure_passwords.i18n import _
-from secure_passwords.strength import PasswordStrengthEvaluator
-from secure_passwords.wordlists import WordlistLoader
+from passwordgen.gui.results_frame import ResultsFrame
+from passwordgen.gui.settings_dialog import SettingsDialog
+from passwordgen.i18n import _
+from passwordgen.strength import PasswordStrengthEvaluator
+from passwordgen.wordlists import WordlistLoader
 
 
 class App(tk.Tk):

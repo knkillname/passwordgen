@@ -6,9 +6,9 @@ import secrets
 import string
 from dataclasses import dataclass
 
-from secure_passwords.config.schema import WordlistsConfig
-from secure_passwords.generators.base import PasswordConfig, PasswordGenerator
-from secure_passwords.wordlists import WordlistLoader
+from passwordgen.config.schema import WordlistsConfig
+from passwordgen.generators.base import PasswordConfig, PasswordGenerator
+from passwordgen.wordlists import WordlistLoader
 
 
 @dataclass(slots=True)

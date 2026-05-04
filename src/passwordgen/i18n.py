@@ -8,7 +8,7 @@ import locale
 import os
 from pathlib import Path
 
-_DOMAIN = "secure_passwords"
+_DOMAIN = "passwordgen"
 _LOCALES_DIR = Path(__file__).resolve().parent / "locales"
 
 

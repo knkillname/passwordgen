@@ -5,8 +5,8 @@ from __future__ import annotations
 import tkinter as tk
 from tkinter import ttk
 
-from secure_passwords.i18n import _
-from secure_passwords.strength import PasswordStrengthEvaluator
+from passwordgen.i18n import _
+from passwordgen.strength import PasswordStrengthEvaluator
 
 
 def _format_crack_time(seconds: float) -> str:
