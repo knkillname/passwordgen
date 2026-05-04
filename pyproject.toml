@@ -1,6 +1,6 @@
 [project]
 name = "secure-passwords"
-version = "0.1.0"
+version = "2.0.0"
 description = "Secure password generator with Tkinter GUI"
 readme = "README.md"
 requires-python = ">=3.14"
