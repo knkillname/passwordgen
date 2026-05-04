@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import unittest
 
-from secure_passwords.wordlists.downloader import HunspellProcessor
+from passwordgen.wordlists.downloader import HunspellProcessor
 
 
 class TestHunspellProcessor(unittest.TestCase):

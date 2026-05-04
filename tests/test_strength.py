@@ -74,6 +74,20 @@ class TestStrengthEvaluator(unittest.TestCase):
         result = self.evaluator.evaluate("hello")
         self.assertEqual(result.crack_seconds(0), float("inf"))
 
+    def test_label_returns_string(self) -> None:
+        """label() returns a non-empty string for every level."""
+
+        result = self.evaluator.evaluate("hello")
+        label = result.label()
+        self.assertIsInstance(label, str)
+        self.assertTrue(len(label) > 0)
+
+    def test_evaluate_many_returns_list(self) -> None:
+        """evaluate_many returns one result per input password."""
+
+        results = self.evaluator.evaluate_many(["hello", "Aa9!Bb8@Cc7#Dd6$"])
+        self.assertEqual(len(results), 2)
+
 
 class TestFormatCrackTime(unittest.TestCase):
     """Validate human-readable crack time formatting."""

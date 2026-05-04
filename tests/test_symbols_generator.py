@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import unittest
 
-from secure_passwords.generators.symbols import RandomSymbolsGenerator, SymbolsConfig
+from passwordgen.generators.symbols import RandomSymbolsGenerator, SymbolsConfig
 
 
 class TestSymbolsGenerator(unittest.TestCase):
@@ -49,3 +49,26 @@ class TestSymbolsGenerator(unittest.TestCase):
         )
         with self.assertRaises(ValueError):
             self.generator.generate(config)
+
+    def test_name_property(self) -> None:
+        """name returns the algorithm display name."""
+
+        self.assertEqual(self.generator.name, "Simbolos aleatorios")
+
+    def test_wrong_config_type_raises(self) -> None:
+        """Passing wrong config type raises TypeError."""
+
+        with self.assertRaises(TypeError):
+            self.generator.generate(object())  # type: ignore[arg-type]
+
+    def test_lowercase_only_charset(self) -> None:
+        """All flags off and no custom charset produces lowercase-only output."""
+
+        config = SymbolsConfig(
+            length=16,
+            use_upper=False,
+            use_digits=False,
+            use_punctuation=False,
+        )
+        password = self.generator.generate(config)
+        self.assertTrue(all(c.islower() for c in password))

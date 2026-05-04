@@ -33,14 +33,21 @@ convention = "numpy"
 add-ignore = ["D202"]
 
 [tool.coverage.run]
-source = ["src/secure_passwords"]
+source = ["src/passwordgen"]
 branch = true
 omit = [
-	"src/secure_passwords/__main__.py",
-	"src/secure_passwords/gui/*",
-	"src/secure_passwords/wordlists/downloader.py",
+	"*/passwordgen/__main__.py",
+	"*/passwordgen/gui/*",
+	"*/passwordgen/wordlists/downloader.py",
+	"*/passwordgen/i18n.py",
 ]
 
 [tool.coverage.report]
 show_missing = true
 skip_covered = false
+omit = [
+	"*/passwordgen/__main__.py",
+	"*/passwordgen/gui/*",
+	"*/passwordgen/wordlists/downloader.py",
+	"*/passwordgen/i18n.py",
+]

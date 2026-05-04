@@ -27,10 +27,10 @@ lint: .venv/bin/python
 	pipenv run pydocstyle src
 
 test: .venv/bin/python
-	PYTHONPATH=src pipenv run coverage run -m unittest discover -s tests -q
+	PYTHONPATH=src pipenv run coverage run --rcfile=pyproject.toml -m unittest discover -s tests -q
 
 coverage: .venv/bin/python
-	pipenv run coverage report -m --fail-under=85
-	pipenv run coverage html
+	pipenv run coverage report --rcfile=pyproject.toml -m --fail-under=85
+	pipenv run coverage html --rcfile=pyproject.toml
 
 all: .venv/bin/python format lint test coverage build

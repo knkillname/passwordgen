@@ -6,7 +6,7 @@ import secrets
 import string
 from dataclasses import dataclass
 
-from secure_passwords.generators.base import PasswordConfig, PasswordGenerator
+from passwordgen.generators.base import PasswordConfig, PasswordGenerator
 
 
 @dataclass(slots=True)
@@ -74,8 +74,6 @@ class RandomSymbolsGenerator(PasswordGenerator):
             raise TypeError("Expected SymbolsConfig")
 
         charset = self._build_charset(config)
-        if not charset:
-            raise ValueError("Character set cannot be empty")
         if config.length < 4:
             raise ValueError("Length must be at least 4")
 
