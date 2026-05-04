@@ -1,27 +1,46 @@
-[build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
-
 [project]
-name = "passwordgen"
-version = "0.2.0"
-authors = [
-  { name="knkillname", email="7888827+knkillname@users.noreply.github.com" },
-]
-description = "A small password generator"
+name = "secure-passwords"
+version = "0.1.0"
+description = "Secure password generator with Tkinter GUI"
 readme = "README.md"
-requires-python = ">=3.10"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-]
+requires-python = ">=3.14"
+
+[tool.black]
+line-length = 88
+target-version = ["py314"]
 
 [tool.isort]
 profile = "black"
+line_length = 88
+src_paths = ["src", "tests"]
 
-[tool.pylint.format]
-max-line-length = "88"
+[tool.mypy]
+python_version = "3.14"
+strict = true
 
-[project.scripts]
-passwordgen = "passwordgen.__main__:entry_point"
+[tool.pylint.main]
+py-version = "3.14"
+source-roots = ["src"]
+
+[tool.pylint.messages_control]
+
+[tool.pylint.design]
+max-parents = 12
+max-attributes = 22
+
+[tool.pydocstyle]
+convention = "numpy"
+add-ignore = ["D202"]
+
+[tool.coverage.run]
+source = ["src/secure_passwords"]
+branch = true
+omit = [
+	"src/secure_passwords/__main__.py",
+	"src/secure_passwords/gui/*",
+	"src/secure_passwords/wordlists/downloader.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = false

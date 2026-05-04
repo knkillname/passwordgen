@@ -6,14 +6,13 @@ name = "pypi"
 [packages]
 
 [dev-packages]
-black = "~=23.11"
-coverage = "~=7.4"
-isort = "~=5.9"
-mypy = "~=1.8"
-pydocstyle = "~=6.3"
-pylint = "~=2.16"
-rope = "~=1.7"
-passwordgen = {editable = true, path = "."}
+black = "*"
+isort = "*"
+mypy = "*"
+pylint = "*"
+pydocstyle = "*"
+coverage = "*"
+build = "*"
 
 [requires]
-python_version = "3.11"
+python_version = "3.14"
