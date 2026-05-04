@@ -1,22 +1,17 @@
-"""Password generators algorithms.
+"""Password generation algorithms."""
 
-This package contains the algorithms used to generate passwords.
-
-Classes
--------
-RandomString
-    Generate a password using a random string.
-XKCDGenerator
-    Generate a password using the XKCD method.
-"""
-from .abc import PasswordGeneratorBase
-from .builders.xkcdbuilder import XKCDPasswordGeneratorBuilder
-from .randomstring import RandomStringPasswordGenerator
-from .xkcd import XKCDPasswordGenerator
+from secure_passwords.generators.alternating import (
+    AlternatingConfig,
+    AlternatingGenerator,
+)
+from secure_passwords.generators.symbols import RandomSymbolsGenerator, SymbolsConfig
+from secure_passwords.generators.words import RandomWordsGenerator, WordsConfig
 
 __all__ = [
-    "PasswordGeneratorBase",
-    "RandomStringPasswordGenerator",
-    "XKCDPasswordGenerator",
-    "XKCDPasswordGeneratorBuilder",
+    "AlternatingConfig",
+    "AlternatingGenerator",
+    "RandomSymbolsGenerator",
+    "RandomWordsGenerator",
+    "SymbolsConfig",
+    "WordsConfig",
 ]
