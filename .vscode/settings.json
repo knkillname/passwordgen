@@ -46,5 +46,8 @@
     "mypy-type-checker.args": [
         "--strict"
     ],
-    "mypy-type-checker.importStrategy": "fromEnvironment"
+    "mypy-type-checker.importStrategy": "fromEnvironment",
+    "chat.tools.terminal.autoApprove": {
+        "make": true
+    }
 }

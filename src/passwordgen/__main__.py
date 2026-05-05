@@ -1,6 +1,6 @@
-"""Application entry point for the secure password generator."""
+"""Module entry point for `python -m passwordgen`."""
 
-from passwordgen.gui.app import run_app
+from passwordgen.cli import cli
 
 if __name__ == "__main__":
-    run_app()
+    raise SystemExit(cli())

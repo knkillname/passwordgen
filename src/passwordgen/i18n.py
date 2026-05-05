@@ -1,4 +1,4 @@
-"""Internationalization utilities for GUI text translation."""
+"""Internationalization utilities for GUI and CLI text translation."""
 
 from __future__ import annotations
 
@@ -100,11 +100,15 @@ def _load_translations() -> gettext.NullTranslations:
             fallback=False,
         )
     except OSError:
-        po_path = _LOCALES_DIR / languages[0] / "LC_MESSAGES" / f"{_DOMAIN}.po"
+        pass
+
+    for language in languages:
+        po_path = _LOCALES_DIR / language / "LC_MESSAGES" / f"{_DOMAIN}.po"
         catalog = _parse_po_catalog(po_path)
         if catalog:
             return _POTranslations(catalog)
-        return gettext.NullTranslations()
+
+    return gettext.NullTranslations()
 
 
 _TRANSLATIONS = _load_translations()

@@ -1,9 +1,12 @@
 [project]
-name = "secure-passwords"
+name = "passwordgen"
 version = "2.0.0"
 description = "Secure password generator with Tkinter GUI"
 readme = "README.md"
 requires-python = ">=3.14"
+
+[project.scripts]
+passwordgen = "passwordgen.cli:cli"
 
 [tool.black]
 line-length = 88
