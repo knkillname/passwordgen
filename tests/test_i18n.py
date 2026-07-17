@@ -25,10 +25,10 @@ class TestI18n(unittest.TestCase):
                         'msgid ""',
                         'msgstr ""',
                         '"Language: es\\n"',
-                        '',
+                        "",
                         'msgid "Secure Password Generator"',
                         'msgstr "Generador de Contrasenas Seguras"',
-                        '',
+                        "",
                     ]
                 ),
                 encoding="utf-8",
@@ -38,7 +38,7 @@ class TestI18n(unittest.TestCase):
                 patch("passwordgen.i18n._LOCALES_DIR", Path(tmpdir)),
                 patch("passwordgen.i18n._preferred_languages", return_value=["es"]),
             ):
-                translations = i18n._load_translations()  # pylint: disable=protected-access
+                translations = i18n.load_translations()
 
             self.assertEqual(
                 translations.gettext("Secure Password Generator"),

@@ -85,7 +85,7 @@ def _preferred_languages() -> list[str]:
     return [short, lang]
 
 
-def _load_translations() -> gettext.NullTranslations:
+def load_translations() -> gettext.NullTranslations:
     """Load translations using `.mo` if available, else `.po` fallback."""
 
     languages = _preferred_languages()
@@ -111,7 +111,7 @@ def _load_translations() -> gettext.NullTranslations:
     return gettext.NullTranslations()
 
 
-_TRANSLATIONS = _load_translations()
+_TRANSLATIONS = load_translations()
 
 
 def _(message: str) -> str:

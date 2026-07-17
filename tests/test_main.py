@@ -118,7 +118,9 @@ class TestMainEntryPoint(unittest.TestCase):
 
         output = io.StringIO()
         with redirect_stdout(output):
-            exit_code = CommandLineApp.main("words", "--count", "2", "--word-count", "3")
+            exit_code = CommandLineApp.main(
+                "words", "--count", "2", "--word-count", "3"
+            )
 
         self.assertEqual(exit_code, 0)
         self.assertEqual(words_generator.generate.call_count, 2)

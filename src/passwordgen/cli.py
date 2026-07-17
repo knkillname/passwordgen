@@ -182,9 +182,13 @@ class CommandLineApp:
         cls._validate_language(language, app_config)
         words_config = WordsConfig(
             word_count=(
-                defaults.word_count if options.word_count is None else options.word_count
+                defaults.word_count
+                if options.word_count is None
+                else options.word_count
             ),
-            separator=defaults.separator if options.separator is None else options.separator,
+            separator=(
+                defaults.separator if options.separator is None else options.separator
+            ),
             language=language,
         )
         generator = RandomWordsGenerator(WordlistLoader(), app_config.wordlists)
@@ -202,7 +206,9 @@ class CommandLineApp:
         cls._validate_language(language, app_config)
         alternating_config = AlternatingConfig(
             word_count=(
-                defaults.word_count if options.word_count is None else options.word_count
+                defaults.word_count
+                if options.word_count is None
+                else options.word_count
             ),
             symbols_per_group=(
                 defaults.symbols_per_group
@@ -222,7 +228,9 @@ class CommandLineApp:
 
         available_languages = set(available_dictionary_keys(app_config.wordlists))
         if language not in available_languages:
-            raise ValueError(_("Unknown language: {language}").format(language=language))
+            raise ValueError(
+                _("Unknown language: {language}").format(language=language)
+            )
 
     @classmethod
     def _normalize_args(cls, args: tuple[str, ...]) -> list[str]:
