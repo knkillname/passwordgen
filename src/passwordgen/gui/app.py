@@ -8,10 +8,12 @@ from tkinter import messagebox, ttk
 
 from passwordgen.config.manager import ConfigManager
 from passwordgen.generators.alternating import AlternatingGenerator
+from passwordgen.generators.bracketed import BracketedGenerator
 from passwordgen.generators.symbols import RandomSymbolsGenerator
 from passwordgen.generators.words import RandomWordsGenerator
 from passwordgen.gui.config_frames import (
     AlternatingConfigFrame,
+    BracketedConfigFrame,
     SymbolsConfigFrame,
     WordsConfigFrame,
 )
@@ -43,6 +45,7 @@ class App(tk.Tk):
             "alternating": AlternatingGenerator(
                 self._loader, self._app_config.wordlists
             ),
+            "bracketed": BracketedGenerator(self._loader, self._app_config.wordlists),
         }
 
         self._evaluator = PasswordStrengthEvaluator()
@@ -79,11 +82,13 @@ class App(tk.Tk):
             "symbols": SymbolsConfigFrame(self.notebook, self._app_config),
             "words": WordsConfigFrame(self.notebook, self._app_config),
             "alternating": AlternatingConfigFrame(self.notebook, self._app_config),
+            "bracketed": BracketedConfigFrame(self.notebook, self._app_config),
         }
 
         self.notebook.add(self._frames["symbols"], text=_("Symbols"))
         self.notebook.add(self._frames["words"], text=_("Words"))
         self.notebook.add(self._frames["alternating"], text=_("Alternating"))
+        self.notebook.add(self._frames["bracketed"], text=_("Bracketed"))
 
         self.results = ResultsFrame(
             result_panel,
@@ -128,14 +133,18 @@ class App(tk.Tk):
         self._loader.clear_cache()
         words_generator = self._generators["words"]
         alternating_generator = self._generators["alternating"]
+        bracketed_generator = self._generators["bracketed"]
         assert isinstance(words_generator, RandomWordsGenerator)
         assert isinstance(alternating_generator, AlternatingGenerator)
+        assert isinstance(bracketed_generator, BracketedGenerator)
         words_generator.set_wordlists_config(self._app_config.wordlists)
         alternating_generator.set_wordlists_config(self._app_config.wordlists)
+        bracketed_generator.set_wordlists_config(self._app_config.wordlists)
 
         self._frames["symbols"].apply_defaults(self._app_config)
         self._frames["words"].apply_defaults(self._app_config)
         self._frames["alternating"].apply_defaults(self._app_config)
+        self._frames["bracketed"].apply_defaults(self._app_config)
         self.batch_var.set(self._app_config.batch_size)
         self.results.set_attempts_per_second(self._app_config.crack_attempts_per_second)
 
@@ -164,6 +173,11 @@ class App(tk.Tk):
                 alternating_generator = self._generators["alternating"]
                 assert isinstance(alternating_generator, AlternatingGenerator)
                 passwords = [alternating_generator.generate(cfg) for _ in range(count)]
+            elif current_tab is self._frames["bracketed"]:
+                cfg = self._frames["bracketed"].get_config()
+                bracketed_generator = self._generators["bracketed"]
+                assert isinstance(bracketed_generator, BracketedGenerator)
+                passwords = [bracketed_generator.generate(cfg) for _ in range(count)]
 
             self.results.set_passwords(passwords)
         except (OSError, TypeError, ValueError) as exc:

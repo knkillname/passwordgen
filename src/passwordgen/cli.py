@@ -8,6 +8,7 @@ import sys
 from passwordgen.config.manager import ConfigManager
 from passwordgen.config.schema import AppConfig
 from passwordgen.generators.alternating import AlternatingConfig, AlternatingGenerator
+from passwordgen.generators.bracketed import BracketedConfig, BracketedGenerator
 from passwordgen.generators.symbols import RandomSymbolsGenerator, SymbolsConfig
 from passwordgen.generators.words import RandomWordsGenerator, WordsConfig
 from passwordgen.gui.app import run_app
@@ -131,6 +132,38 @@ class CommandLineApp:
             help=_("Disable digits in symbol groups."),
         )
 
+        bracketed_parser = subparsers.add_parser(
+            "bracketed",
+            help=_("Generate bracketed passwords (word + symbols + (word))."),
+        )
+        bracketed_parser.add_argument(
+            "--count",
+            type=int,
+            default=None,
+            help=_("Number of passwords to print."),
+        )
+        bracketed_parser.add_argument(
+            "--symbols-between",
+            type=int,
+            default=None,
+            help=_("Symbols between first word and opening bracket."),
+        )
+        bracketed_parser.add_argument(
+            "--language",
+            default=None,
+            help=_("Dictionary language key (for example: en, es)."),
+        )
+        bracketed_parser.add_argument(
+            "--no-digits",
+            action="store_true",
+            help=_("Disable digits in the symbol group."),
+        )
+        bracketed_parser.add_argument(
+            "--no-punctuation",
+            action="store_true",
+            help=_("Disable punctuation in the symbol group."),
+        )
+
         return parser
 
     @classmethod
@@ -149,7 +182,10 @@ class CommandLineApp:
         if algorithm == "words":
             cls._run_words_cli(options, app_config, count)
             return 0
-        cls._run_alternating_cli(options, app_config, count)
+        if algorithm == "alternating":
+            cls._run_alternating_cli(options, app_config, count)
+            return 0
+        cls._run_bracketed_cli(options, app_config, count)
         return 0
 
     @classmethod
@@ -223,6 +259,29 @@ class CommandLineApp:
             print(generator.generate(alternating_config))
 
     @classmethod
+    def _run_bracketed_cli(
+        cls, options: argparse.Namespace, app_config: AppConfig, count: int
+    ) -> None:
+        """Generate bracketed passwords in CLI mode."""
+
+        defaults = app_config.bracketed
+        language = defaults.language if options.language is None else options.language
+        cls._validate_language(language, app_config)
+        bracketed_config = BracketedConfig(
+            symbols_between=(
+                defaults.symbols_between
+                if options.symbols_between is None
+                else options.symbols_between
+            ),
+            language=language,
+            use_digits=defaults.use_digits and not options.no_digits,
+            use_punctuation=defaults.use_punctuation and not options.no_punctuation,
+        )
+        generator = BracketedGenerator(WordlistLoader(), app_config.wordlists)
+        for _ in range(count):
+            print(generator.generate(bracketed_config))
+
+    @classmethod
     def _validate_language(cls, language: str, app_config: AppConfig) -> None:
         """Validate language key against available dictionaries."""
 
@@ -238,7 +297,15 @@ class CommandLineApp:
 
         if not args:
             return ["symbols"]
-        if args[0] in {"-h", "--help", "--gui", "symbols", "words", "alternating"}:
+        if args[0] in {
+            "-h",
+            "--help",
+            "--gui",
+            "symbols",
+            "words",
+            "alternating",
+            "bracketed",
+        }:
             return list(args)
         return ["symbols", *args]
 

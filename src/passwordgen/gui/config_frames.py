@@ -8,6 +8,7 @@ from tkinter import ttk
 
 from passwordgen.config.schema import AppConfig
 from passwordgen.generators.alternating import AlternatingConfig
+from passwordgen.generators.bracketed import BracketedConfig
 from passwordgen.generators.symbols import SymbolsConfig
 from passwordgen.generators.words import WordsConfig
 from passwordgen.i18n import _
@@ -236,3 +237,75 @@ class AlternatingConfigFrame(BaseConfigFrame):
         if self.language_var.get() not in values:
             self.language_var.set(values[0])
         self.use_digits_var.set(app_config.alternating.use_digits)
+
+
+class BracketedConfigFrame(BaseConfigFrame):
+    """Input controls for bracketed word + symbols + (word) generation."""
+
+    def __init__(self, master: tk.Misc, app_config: AppConfig) -> None:
+        super().__init__(master, padding=12)
+
+        self.symbols_var = tk.IntVar(value=app_config.bracketed.symbols_between)
+        self.language_var = tk.StringVar(value=app_config.bracketed.language)
+        self.use_digits_var = tk.BooleanVar(value=app_config.bracketed.use_digits)
+        self.use_punctuation_var = tk.BooleanVar(
+            value=app_config.bracketed.use_punctuation
+        )
+
+        ttk.Label(self, text=_("Symbols between")).grid(row=0, column=0, sticky="w")
+        ttk.Spinbox(self, from_=1, to=12, textvariable=self.symbols_var, width=8).grid(
+            row=0, column=1, sticky="w"
+        )
+
+        ttk.Label(self, text=_("Dictionary")).grid(
+            row=1, column=0, sticky="w", pady=(8, 0)
+        )
+        self.dictionary_combo = ttk.Combobox(
+            self,
+            values=available_dictionary_keys(app_config.wordlists),
+            state="readonly",
+            textvariable=self.language_var,
+            width=8,
+        )
+        self.dictionary_combo.grid(row=1, column=1, sticky="w", pady=(8, 0))
+
+        ttk.Checkbutton(
+            self, text=_("Include digits"), variable=self.use_digits_var
+        ).grid(row=2, column=0, sticky="w", pady=(8, 0), columnspan=2)
+        ttk.Checkbutton(
+            self, text=_("Include punctuation"), variable=self.use_punctuation_var
+        ).grid(row=3, column=0, sticky="w", columnspan=2)
+
+    def get_config(self) -> BracketedConfig:
+        """Build `BracketedConfig` from current controls.
+
+        Returns
+        -------
+        BracketedConfig
+            Runtime generation settings.
+        """
+
+        return BracketedConfig(
+            symbols_between=max(1, self.symbols_var.get()),
+            language=self.language_var.get() or "en",
+            use_digits=self.use_digits_var.get(),
+            use_punctuation=self.use_punctuation_var.get(),
+        )
+
+    def apply_defaults(self, app_config: AppConfig) -> None:
+        """Load frame values from app defaults.
+
+        Parameters
+        ----------
+        app_config : AppConfig
+            Source defaults.
+        """
+
+        self.symbols_var.set(app_config.bracketed.symbols_between)
+        values = available_dictionary_keys(app_config.wordlists)
+        self.dictionary_combo.configure(values=values)
+        self.language_var.set(app_config.bracketed.language)
+        if self.language_var.get() not in values:
+            self.language_var.set(values[0])
+        self.use_digits_var.set(app_config.bracketed.use_digits)
+        self.use_punctuation_var.set(app_config.bracketed.use_punctuation)

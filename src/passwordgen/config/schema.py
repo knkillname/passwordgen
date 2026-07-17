@@ -77,6 +77,28 @@ class AlternatingDefaults:
 
 
 @dataclass(slots=True)
+class BracketedDefaults:
+    """Default parameters for bracketed passwords.
+
+    Attributes
+    ----------
+    symbols_between : int
+        Number of symbols between first word and opening bracket.
+    language : str
+        Language key for the wordlist.
+    use_digits : bool
+        Whether the symbol group can include digits.
+    use_punctuation : bool
+        Whether the symbol group can include punctuation.
+    """
+
+    symbols_between: int = 4
+    language: str = "en"
+    use_digits: bool = True
+    use_punctuation: bool = True
+
+
+@dataclass(slots=True)
 class WordlistsConfig:
     """Mapping of language keys to custom wordlist files.
 
@@ -102,6 +124,8 @@ class AppConfig:
         Defaults for words generator parameters.
     alternating : AlternatingDefaults
         Defaults for alternating generator parameters.
+    bracketed : BracketedDefaults
+        Defaults for bracketed generator parameters.
     wordlists : WordlistsConfig
         Wordlist source mapping by language key.
     theme : str
@@ -115,6 +139,7 @@ class AppConfig:
     symbols: SymbolsDefaults = field(default_factory=SymbolsDefaults)
     words: WordsDefaults = field(default_factory=WordsDefaults)
     alternating: AlternatingDefaults = field(default_factory=AlternatingDefaults)
+    bracketed: BracketedDefaults = field(default_factory=BracketedDefaults)
     wordlists: WordlistsConfig = field(default_factory=WordlistsConfig)
     theme: str = "clam"
     batch_size: int = 5
